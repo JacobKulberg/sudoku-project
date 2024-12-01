@@ -1,5 +1,7 @@
 import math,random
 
+import pygame
+
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
 https://www.geeksforgeeks.org/program-sudoku-generator/
@@ -23,8 +25,10 @@ class SudokuGenerator:
 	None
     '''
     def __init__(self, row_length, removed_cells):
-        pass
-
+        self.row_length = row_length
+        self.removed_cells = removed_cells
+        self.board = [[0 for i in range(self.row_length)] for i in range(self.row_length)]
+        self.box_length = math.sqrt(self.row_length)
     '''
 	Returns a 2D python list of numbers which represents the board
 
@@ -32,7 +36,7 @@ class SudokuGenerator:
 	Return: list[list]
     '''
     def get_board(self):
-        pass
+        return self.board
 
     '''
 	Displays the board to the console
@@ -42,7 +46,8 @@ class SudokuGenerator:
 	Return: None
     '''
     def print_board(self):
-        pass
+        for row in self.board:
+            print(row)
 
     '''
 	Determines if num is contained in the specified row (horizontal) of the board
@@ -55,7 +60,10 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_row(self, row, num):
-        pass
+        if num in self.board[row]:
+            return False
+        else:
+            return True
 
     '''
 	Determines if num is contained in the specified column (vertical) of the board
@@ -68,7 +76,10 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_col(self, col, num):
-        pass
+        for i in range(len(self.board)):
+            if self.board[i][col] == num:
+                return False
+        return True
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -202,6 +213,116 @@ removed is the number of cells to clear (set to 0)
 
 Return: list[list] (a 2D Python list to represent the board)
 '''
+
+class Cell:
+    def __init__(self, value, row, col, screen):
+        self.value = value
+        self.sketch = 0
+        self.row = row
+        self.col = col
+        self.screen = screen
+        self.is_selected = False
+    def set_cell_value(self, value):
+        self.value = value
+    def set_sketched_value(self, value):
+        self.sketch = value
+
+    def draw(self):
+        # Assuming each cell is 60x60 pixels
+        x = self.col * 60
+        y = self.row * 60
+        rect = pygame.Rect(x, y, 60, 60)
+        pygame.draw.rect(self.screen, (255, 255, 255), rect)
+        if self.is_selected:
+            pygame.draw.rect(self.screen, (255, 0, 0), rect, 3)
+        pygame.draw.rect(self.screen, (0, 0, 0), rect, 1)
+
+        if self.value != 0:
+            font = pygame.font.Font("Times New Roman", 74)
+            text = font.render(str(self.value), True, (0, 0, 0))
+            self.screen.blit(text, (x + 20, y + 10))
+
+        if self.sketch != 0:
+            font = pygame.font.Font("Times New Roman", 34)
+            sketch_text = font.render(str(self.sketch), True, (255, 0, 0))
+            self.screen.blit(sketch_text, (x + 5, y + 5))
+
+class Board:
+    def __init__(self, width, height, screen, difficulty):
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+        self.cells = [[Cell(0, row, col, screen) for col in range(9)] for row in range(9)]
+        self.selected_cell = None
+
+    def select(self, row, col):
+        if self.selected_cell:
+            self.selected_cell.is_selected = False
+        self.selected_cell = self.cells[row][col]
+        self.selected_cell.is_selected = True
+
+    def click(self, x, y):
+        col = x // 60
+        row = y // 60
+        return row, col
+
+    def clear(self):
+        if self.selected_cell:
+            self.selected_cell.set_cell_value(0)
+
+    def sketch(self, value):
+        if self.selected_cell:
+            self.selected_cell.set_sketched_value(value)
+
+    def place_number(self, value):
+        if self.selected_cell:
+            self.selected_cell.set_cell_value(value)
+
+    def is_full(self):
+        for row in self.cells:
+            for cell in row:
+                if cell.value == 0:
+                    return False
+        return True
+
+    def check_board(self):
+        for row in self.cells:
+            if not self.check_unique([cell.value for cell in row]):
+                return False
+        for col in range(9):
+            if not self.check_unique([self.cells[row][col].value for row in range(9)]):
+                return False
+        for box_row in range(3):
+            for box_col in range(3):
+                if not self.check_unique([self.cells[row][col].value for row in range(box_row*3, (box_row+1)*3) for col in range(box_col*3,(box_col+1)*3)]):
+                    return False
+        return True
+    def check_unique(self, values):
+        seen = set()
+        for value in values:
+            if value != 0:
+                if value in seen:
+                    return False
+                seen.add(value)
+        return True
+
+    def move_selection(self, direction):
+        if self.selected_cell:
+            row, col = self.selected_cell.row, self.selected_cell.col
+
+            if direction == "UP" and row > 0:
+                self.select(row - 1, col)
+            elif direction == "DOWN" and row < 8:
+                self.select(row + 1, col)
+            elif direction == "LEFT" and col > 0:
+                self.select(row, col - 1)
+            elif direction == "RIGHT" and col < 8:
+                self.select(row, col + 1)
+
+
+
+
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
@@ -209,3 +330,40 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
+
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((540, 540))
+    pygame.display.set_caption("Sudoku")
+
+    board = Board(9, 9, screen, difficulty=1)
+
+    running = True
+    while running:
+        screen.fill((255, 255, 255))
+        board.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    board.move_selection("UP")
+                elif event.key == pygame.K_DOWN:
+                    board.move_selection("DOWN")
+                elif event.key == pygame.K_LEFT:
+                    board.move_selection("LEFT")
+                elif event.key == pygame.K_RIGHT:
+                    board.move_selection("RIGHT")
+                elif event.key == pygame.K_DELETE:
+                    board.clear()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                clicked_cell = board.click(x, y)
+                if clicked_cell:
+                    board.select(*clicked_cell)
+
+        pygame.display.flip()
+
+    pygame.quit()
