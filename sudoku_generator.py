@@ -28,7 +28,7 @@ class SudokuGenerator:
         self.row_length = row_length
         self.removed_cells = removed_cells
         self.board = [[0 for i in range(self.row_length)] for j in range(self.row_length)]
-        self.box_length = math.sqrt(self.row_length)
+        self.box_length = int(math.sqrt(self.row_length))
 
     '''
 	Returns a 2D python list of numbers which represents the board
@@ -98,8 +98,8 @@ class SudokuGenerator:
     '''
 
     def valid_in_box(self, row_start, col_start, num):
-        for i in 3:
-            for j in 3:
+        for i in range(3):
+            for j in range(3):
                 if self.board[row_start+i][col_start+j] == num:
                     return False
         return True
@@ -116,7 +116,19 @@ class SudokuGenerator:
     '''
 
     def is_valid(self, row, col, num):
-        if self.valid_in_row(row, num) and self.valid_in_col(col, num) and self.valid_in_box(row, col, num):
+        if row < 3:
+            rowstart = 0
+        elif row < 6:
+            rowstart = 3
+        else:
+            rowstart = 6
+        if col < 3:
+            colstart = 0
+        elif col < 6:
+            colstart = 3
+        else:
+            colstart = 6
+        if self.valid_in_row(row, num) and self.valid_in_col(col, num) and self.valid_in_box(rowstart, colstart, num):
             return True
 
     '''
@@ -131,14 +143,12 @@ class SudokuGenerator:
     '''
 
     def fill_box(self, row_start, col_start):
-        hold = []
-        num = random.randint(1, 9)
-        self.board[row_start][col_start] = num
-        hold.append(num)
-        for i in 3:
-            for j in 3:
+        hold = [10]
+        num = random.randint(1, 10)
+        for i in range(3):
+            for j in range(3):
                 while num in hold:
-                    num = random.randint(1, 9)
+                    num = random.randint(1, 10)
                 hold.append(num)
                 self.board[row_start+i][col_start+j] = num
 
@@ -230,9 +240,10 @@ class SudokuGenerator:
         nums = set()
         count = 0
         while len(nums) < self.removed_cells:
-            nums.add(random.randint(1, self.row_length^2))
-        for i in self.row_length:
-            for j in self.row_length:
+            nums.add(random.randint(1, 81))
+        print(nums)
+        for i in range(self.row_length):
+            for j in range(self.row_length):
                 count+=1
                 if count in nums:
                     self.board[i][j] = 0
