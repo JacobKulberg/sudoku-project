@@ -17,8 +17,8 @@ class Cell:
         fontSmall = pygame.font.SysFont('Arial', 30)
         if self.value != 0:
             text = fontBig.render(str(self.value), True, 'Black')
-            self.screen.blit(text, (self.col * 70, self.row * 70))
+            self.screen.blit(text, (self.col * 70 + 19, self.row * 70))
         if self.sketchedval != 0:
             sketch = fontSmall.render(str(self.sketchedval), True, 'Grey')
-            self.screen.blit(sketch, (self.col * 70+5, self.row * 70+5))
+            self.screen.blit(sketch, (self.col * 70+5, self.row * 70+1))
 
