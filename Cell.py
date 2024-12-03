@@ -13,10 +13,12 @@ class Cell:
     def set_sketched_value(self, value):
         self.sketchedval = value
     def draw(self):
-        font = pygame.font.SysFont('Arial', 60)
-        text = font.render(str(self.value), True, 'Black')
-        self.screen.blit(text, (self.col * 70, self.row * 70))
+        fontBig = pygame.font.SysFont('Arial', 60)
+        fontSmall = pygame.font.SysFont('Arial', 30)
+        if self.value != 0:
+            text = fontBig.render(str(self.value), True, 'Black')
+            self.screen.blit(text, (self.col * 70, self.row * 70))
         if self.sketchedval != 0:
-            sketch = font.render(str(self.sketchedval), True, 'Grey', size=12)
-            self.screen.blit(sketch, (self.col * 70, self.row * 70))
+            sketch = fontSmall.render(str(self.sketchedval), True, 'Grey')
+            self.screen.blit(sketch, (self.col * 70+5, self.row * 70+5))
 

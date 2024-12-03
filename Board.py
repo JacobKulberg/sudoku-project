@@ -2,7 +2,7 @@ import pygame
 
 from Cell import Cell
 
-from FINAL import SudokuGenerator
+from Sudoku import SudokuGenerator
 
 
 class Board:
@@ -114,6 +114,7 @@ class Board:
     def sketch(self, value):
         if not self.currCell.isOG:
             self.currCell.set_sketched_value(value)
+            self.currCell.draw()
 
     def place_number(self, value):
         if not self.currCell.isOG:
