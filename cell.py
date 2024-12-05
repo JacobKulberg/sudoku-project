@@ -37,7 +37,7 @@ class Cell:
     #draws the value (non-user input) if it exists
     if self.value != 0:
         num = font.render(str(self.value), 0, (0, 0, 0))
-        self.screen.blit(num, num.get_rect(center=(x, y, cell_size, cell_size).center))
+        self.screen.blit(num, num.get_rect(center=((self.col *cell_size + cell_size/2), (self.row * cell_size + cell_size/2))))
     #draws sketched value (user input) if it exists
     elif self.sketched_value != 0:
         sketch_num = font.render(str(self.sketched_value), 0, (50, 50, 50))
