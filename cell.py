@@ -30,17 +30,17 @@ class Cell:
 
         #draws cell border
         pygame.draw.rect(self.screen, (0, 0, 0), (x, y, cell_size, cell_size), 1)
-    # if cell is selected, it will be highlighted red
-    if self.selected:
+        # if cell is selected, it will be highlighted red
+        if self.selected:
             pygame.draw.rect(self.screen, (100, 0, 0), (x, y, cell_size, cell_size), 5)
-    font = pygame.font.Font(None, 40)
-    #draws the value (non-user input) if it exists
-    if self.value != 0:
-        num = font.render(str(self.value), 0, (0, 0, 0))
-        self.screen.blit(num, num.get_rect(center=((self.col *cell_size + cell_size/2), (self.row * cell_size + cell_size/2))))
-    #draws sketched value (user input) if it exists
-    elif self.sketched_value != 0:
-        sketch_num = font.render(str(self.sketched_value), 0, (50, 50, 50))
-        self.screen.blit(sketch_text, sketch_text.get_rect(topleft=(x, y)))
+        font = pygame.font.Font(None, 40)
+        #draws the value (non-user input) if it exists
+        if self.value != 0:
+            num = font.render(str(self.value), 0, (0, 0, 0))
+            self.screen.blit(num, num.get_rect(center=((self.col *cell_size + cell_size/2), (self.row * cell_size + cell_size/2))))
+        #draws sketched value (user input) if it exists
+        elif self.sketched_value != 0:
+            sketch_num = font.render(str(self.sketched_value), 0, (50, 50, 50))
+            self.screen.blit(sketch_text, sketch_text.get_rect(topleft=(x, y)))
 
 
