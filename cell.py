@@ -41,6 +41,6 @@ class Cell:
         #draws sketched value (user input) if it exists
         elif self.sketched_value != 0:
             sketch_num = font.render(str(self.sketched_value), 0, (50, 50, 50))
-            self.screen.blit(sketch_text, sketch_text.get_rect(topleft=(x, y)))
+            self.screen.blit(sketch_num, sketch_num.get_rect(topleft=(x, y)))
 
 
