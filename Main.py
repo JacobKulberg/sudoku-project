@@ -170,8 +170,8 @@ def main():
                                 board.select(translateX(y1new), translateX(x1new))
                         elif event.key == pygame.K_UP:
                             if y1new != 0:
-                                y1new = y1new+70
-                                y2new = y2new+70
+                                y1new = y1new-70
+                                y2new = y2new-70
                                 board.select(translateX(y1new), translateX(x1new))
                         elif event.key == pygame.K_DOWN:
                             if y2new != 630:
