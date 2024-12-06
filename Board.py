@@ -7,13 +7,13 @@ from Sudoku import SudokuGenerator
 
 class Board:
 
-    def __init__(self, width=630, height=630, screen=None, difficulty='easy'):
+    def __init__(self, width=630, height=700, screen=None, difficulty='easy'):
 
         self.screen = screen
         self.width = width
         self.height = height
         if difficulty == 'easy':
-            self.difficulty = 30
+            self.difficulty = 1
         elif difficulty == 'medium':
             self.difficulty = 40
         elif difficulty == 'hard':
@@ -44,9 +44,20 @@ class Board:
                 pygame.draw.line(self.screen, 'black', (0, i * (630 / 9)), (630, i * (630 / 9)), width=5)
             else:
                 pygame.draw.line(self.screen, 'black', (0, i * (630 / 9)), (630, i * (630 / 9)))
+        pygame.draw.line(self.screen, 'black', (0, 630), (630, 630), width=5)
         for i in range(9):
             for j in range(9):
-                self.lst[i][j].draw()
+                self.lst[j][i].draw()
+        fontSmall = pygame.font.SysFont('Arial', 30)
+        pygame.draw.rect(self.screen, (173, 216, 230), (100, 640, 100, 50))
+        pygame.draw.rect(self.screen, (173, 216, 230), (250, 640, 150, 50))
+        pygame.draw.rect(self.screen, (173, 216, 230), (450, 640, 100, 50))
+        text = fontSmall.render('RESET', True, 'black')
+        self.screen.blit(text, (100, 640))
+        t2 = fontSmall.render('RESTART', True, 'black')
+        self.screen.blit(t2, (250, 640))
+        t3 = fontSmall.render('EXIT', True, 'black')
+        self.screen.blit(t3, (450, 640))
 
     def click(self, x, y):
 
@@ -114,7 +125,6 @@ class Board:
     def sketch(self, value):
         if not self.currCell.isOG:
             self.currCell.set_sketched_value(value)
-            self.currCell.draw()
 
     def place_number(self, value):
         if not self.currCell.isOG:
@@ -131,13 +141,45 @@ class Board:
     def is_full(self):
         for i in range(9):
             for j in range(9):
-                if self.board.get_board()[i][j] == 0:
+                if self.lst[i][j].value == 0:
                     return False
         return True
 
-    def check_borad(self):
+    def check_board(self):
         for i in range(9):
             for j in range(9):
-                if not self.board.is_valid(i, j, self.board.get_board()[i][j]):
+                self.board.board[i][j] = self.lst[i][j].value
+        Hold = True
+
+
+        for i in range(9):
+            row = set()
+            for j in range(9):
+                if self.board.board[i][j] not in row:
+                    row.add(self.board.board[i][j])
+            if len(row) != 9:
+                return False
+
+
+        for i in range(9):
+            col = set()
+            for j in range(9):
+                if self.board.board[j][i] not in col:
+                    col.add(self.board.board[j][i])
+            if len(col) != 9:
+                return False
+
+        for box_row in range(0, 9, 3):
+            for box_col in range(0, 9, 3):
+                box = set()
+                for i in range(3):
+                    for j in range(3):
+                        value = self.board.board[box_row + i][box_col + j]
+                        if value not in box:
+                            box.add(value)
+                if len(box) != 9:
                     return False
         return True
+
+
+
