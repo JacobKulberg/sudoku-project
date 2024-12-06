@@ -13,7 +13,7 @@ class Board:
         self.width = width
         self.height = height
         if difficulty == 'easy':
-            self.difficulty = 1
+            self.difficulty = 30
         elif difficulty == 'medium':
             self.difficulty = 40
         elif difficulty == 'hard':
