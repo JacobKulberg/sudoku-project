@@ -1,5 +1,6 @@
 import pygame
-
+from cell import Cell
+from sudoku_generator import SudokuGenerator
 class Board:
     #difficulty is gonna be a number, easy = 1, med = 2, hard = 3
     def init(self, width, height, screen, difficulty):
