@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pygame
 
 import sudoku_generator
@@ -6,7 +8,11 @@ from sudoku_generator import SudokuGenerator
 class Board:
     #difficulty is gonna be a number, easy = 1, med = 2, hard = 3
     def __init__(self, width, height, screen, difficulty):
-        self.vals = sudoku_generator.generate_sudoku(9, 20+(difficulty*10))
+        sudoku = SudokuGenerator(9, (difficulty*1))
+        sudoku.fill_values()
+        self.key = deepcopy(sudoku.get_board())
+        sudoku.remove_cells()
+        self.vals = sudoku.get_board()
 
         self.width = width
         self.height = height
@@ -68,7 +74,7 @@ class Board:
     def is_full(self):
         for row in self.cells:
             for cell in row:
-                if cell.value == 0:
+                if cell.value == 0 and cell.sketched_value == 0:
                     return False
         return True
     def update_board(self):
@@ -90,7 +96,6 @@ class Board:
         #check if board is solved correctly
         for i in range(0,9):
             for j in range(0,9):
-                if self.vals[i][j] == 0:
-                    if self.cells[i][j].value != self.key[i][j]:
-                        return False
+                if self.cells[i][j].sketched_value != 0 and self.cells[i][j].sketched_value != self.key[i][j]:
+                    return False
         return True

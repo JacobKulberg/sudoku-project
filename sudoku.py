@@ -81,36 +81,47 @@ def main():
 
     board = Board(WIDTH, WIDTH, screen, difficulty)
 
-    running = True
-    while running:
-        screen.fill(BG_COLOR)
-        board.draw()
-        pygame.display.flip()
+    game_over = False
+    while True:
+        if game_over:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_1: #PLACEHOLDER FOR A FUTURE BUTTON
+                        difficulty = start_screen(screen)
+                        board = Board(WIDTH, WIDTH, screen, difficulty)
+                        game_over = False
+                        break
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
-                clicked_cell = board.click(x, y)
-                if clicked_cell:
-                    board.select(clicked_cell[0], clicked_cell[1])
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    if board.is_full():
-                        win = board.check_board()
-                        game_over_screen(screen, win)
-                        running = False
-                elif pygame.K_1 <= event.key <= pygame.K_9:
-                    value = event.key - pygame.K_0
-                    board.sketch(value)
-                elif event.key == pygame.K_BACKSPACE:
-                    board.clear()
+        else:
+            screen.fill(BG_COLOR)
+            board.draw()
+            pygame.display.flip()
 
-        pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    clicked_cell = board.click(x, y)
+                    if clicked_cell:
+                        board.select(clicked_cell[0], clicked_cell[1])
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if board.is_full():
+                            win = board.check_board()
+                            game_over_screen(screen, win)
+                            game_over = True
+                    elif pygame.K_1 <= event.key <= pygame.K_9:
+                        value = event.key - pygame.K_0
+                        board.sketch(value)
+                    elif event.key == pygame.K_BACKSPACE:
+                        board.clear()
 
-    pygame.quit()
-    sys.exit()
+            pygame.display.update()
 
 if __name__ == "__main__":
     main()
