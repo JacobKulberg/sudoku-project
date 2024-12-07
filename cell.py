@@ -1,5 +1,7 @@
+import pygame
+
 class Cell():
-    def init(self, value, row, col, screen):
+    def __init__(self, value, row, col, screen):
         self.value = value
         self.sketched_value = 0
         self.row = row

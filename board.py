@@ -44,8 +44,8 @@ class Board:
 
     def click(self, x, y):
         if (x<= self.width) and (y <=self.height):
-            row = int(x/(self.width/9))
-            col = int(y/(self.height/9))
+            row = int(y/(self.width/9))
+            col = int(x/(self.height/9))
             return (row, col)
         return None
 
