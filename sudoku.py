@@ -11,32 +11,35 @@ GRAY = (168, 168, 168)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
+BUTTON_WIDTH = 120
 
 def draw_buttons(screen, font):
-    pygame.draw.rect(screen, (100, 0, 0), (80, 400, 120, 40), 4)
-    surface = font.render("EASY", 0, BLACK)
-    screen.blit(surface, surface.get_rect(center=(140, 420)))
+    modes = ["EASY", "MEDIUM", "HARD"]
+    box_spacing = (WIDTH-(BUTTON_WIDTH*len(modes))) / (len(modes)+1)
+    button_positions = []
 
-    pygame.draw.rect(screen, (100, 0, 0), (260, 400, 120, 40), 4)
-    surface = font.render("MEDIUM", 0, BLACK)
-    screen.blit(surface, surface.get_rect(center=(320, 420)))
+    for index, mode in enumerate(modes):
+        position = (box_spacing*(index+1)) + (BUTTON_WIDTH*index)
+        pygame.draw.rect(screen, (100, 0, 0), (position, 400,BUTTON_WIDTH , 40), 4)
+        surface = font.render(mode, 0, BLACK)
+        screen.blit(surface, surface.get_rect(center=(position+BUTTON_WIDTH/2, 420)))
 
-    pygame.draw.rect(screen, (100, 0, 0), (440, 400, 120, 40), 4)
-    surface = font.render("HARD", 0, BLACK)
-    screen.blit(surface, surface.get_rect(center=(500, 420)))
+        button_positions.append([position, 400])
+
+    return button_positions
 
 def start_screen(screen):
     """Displays the start screen where the user selects difficulty."""
     screen.fill(BG_COLOR)
     font = pygame.font.Font(None, 50)
     text = font.render("Welcome to Sudoku", 0, BLACK)
-    font = pygame.font.Font(None, 40)
 
+    font = pygame.font.Font(None, 40)
     game_mode_text = font.render("Select Game Mode:", 0, BLACK)
     game_mode_text_rect = game_mode_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
     screen.blit(game_mode_text, game_mode_text_rect)
 
-    draw_buttons(screen, font)
+    button_positions = draw_buttons(screen, font)
     pygame.display.flip()
 
     while True:
@@ -46,11 +49,12 @@ def start_screen(screen):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
-                if 80 <= x <= 200 and 400 <= y <= 440:
+
+                if button_positions[0][0] <= x <= button_positions[0][0]+BUTTON_WIDTH and 400 <= y <= 440:
                     return 1  # Easy
-                elif 260 <= x <= 380 and 400 <= y <= 440:
+                elif button_positions[1][0] <= x <= button_positions[1][0]+BUTTON_WIDTH and 400 <= y <= 440:
                     return 2  # Medium
-                elif 440 <= x <= 560 and 400 <= y <= 440:
+                elif button_positions[2][0] <= x <= button_positions[2][0]+BUTTON_WIDTH and 400 <= y <= 440:
                     return 3  # Hard
 
 def game_over_screen(screen, win):
