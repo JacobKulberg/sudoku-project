@@ -1,14 +1,12 @@
 import pygame
+
+import sudoku_generator
 from cell import Cell
 from sudoku_generator import SudokuGenerator
 class Board:
     #difficulty is gonna be a number, easy = 1, med = 2, hard = 3
     def __init__(self, width, height, screen, difficulty):
-        sudoku = SudokuGenerator(9, 20+(difficulty*10))
-        sudoku.fill_values()
-        self.key = sudoku.get_board()
-        sudoku.remove_cells()
-        self.vals = sudoku.get_board()
+        self.vals = sudoku_generator.generate_sudoku(9, 20+(difficulty*10))
 
         self.width = width
         self.height = height
@@ -39,6 +37,8 @@ class Board:
         pygame.display.update()
 
     def select(self, row, col):
+        self.cells[self.selected[0]][self.selected[1]].selected = False
+
         self.cells[row][col].selected = True
         self.selected = [row, col]
 
