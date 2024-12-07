@@ -8,7 +8,7 @@ from sudoku_generator import SudokuGenerator
 class Board:
     #difficulty is gonna be a number, easy = 1, med = 2, hard = 3
     def __init__(self, width, height, screen, difficulty):
-        sudoku = SudokuGenerator(9, (difficulty*1))
+        sudoku = SudokuGenerator(9, 20+(difficulty*10))
         sudoku.fill_values()
         self.key = deepcopy(sudoku.get_board())
         sudoku.remove_cells()
