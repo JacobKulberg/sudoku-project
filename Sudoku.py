@@ -241,7 +241,6 @@ class SudokuGenerator:
         count = 0
         while len(nums) < self.removed_cells:
             nums.add(random.randint(1, 81))
-        print(nums)
         for i in range(self.row_length):
             for j in range(self.row_length):
                 count+=1

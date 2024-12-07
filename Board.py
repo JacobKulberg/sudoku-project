@@ -49,15 +49,15 @@ class Board:
             for j in range(9):
                 self.lst[j][i].draw()
         fontSmall = pygame.font.SysFont('Arial', 30)
-        pygame.draw.rect(self.screen, (173, 216, 230), (100, 640, 100, 50))
-        pygame.draw.rect(self.screen, (173, 216, 230), (250, 640, 150, 50))
-        pygame.draw.rect(self.screen, (173, 216, 230), (450, 640, 100, 50))
+        pygame.draw.rect(self.screen, (173, 216, 230), (63.75, 640, 125, 50))
+        pygame.draw.rect(self.screen, (173, 216, 230), (252.5, 640, 125, 50))
+        pygame.draw.rect(self.screen, (173, 216, 230), (441.25, 640, 125, 50))
         text = fontSmall.render('RESET', True, 'black')
-        self.screen.blit(text, (100, 640))
+        self.screen.blit(text, (85, 646))
         t2 = fontSmall.render('RESTART', True, 'black')
-        self.screen.blit(t2, (250, 640))
+        self.screen.blit(t2, (257, 646))
         t3 = fontSmall.render('EXIT', True, 'black')
-        self.screen.blit(t3, (450, 640))
+        self.screen.blit(t3, (475, 646))
 
     def click(self, x, y):
 

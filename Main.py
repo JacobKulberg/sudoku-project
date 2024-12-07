@@ -55,30 +55,35 @@ def main():
         while play:
             while running == 'level':
                 fontSmall = pygame.font.SysFont('Arial', 30)
+                fontBig = pygame.font.SysFont('Arial', 60)
                 screen.fill("white")
-                pygame.draw.rect(screen, (173, 216, 230), (100, 400, 100, 50))
-                pygame.draw.rect(screen, (173, 216, 230), (250, 400, 150, 50))
-                pygame.draw.rect(screen, (173, 216, 230), (450, 400, 100, 50))
+                pygame.draw.rect(screen, (231,209,255), (0, 0, 630, 700))
+                pygame.draw.rect(screen, (255, 255, 255), (63.75, 400, 125, 50))
+                pygame.draw.rect(screen, (255, 255, 255), (252.5, 400, 125, 50))
+                pygame.draw.rect(screen, (255, 255, 255), (441.25, 400, 125, 50))
+                pygame.draw.rect(screen, (255, 255, 255), (165, 100, 300, 100))
+                title = fontBig.render('SUDOKU', True, 'black')
+                screen.blit(title, (210, 112.5))
                 text = fontSmall.render('EASY', True, 'black')
-                screen.blit(text, (100, 400))
+                screen.blit(text, (95, 405))
                 t2 = fontSmall.render('MEDIUM', True, 'black')
-                screen.blit(t2, (250, 400))
+                screen.blit(t2, (265, 405))
                 t3 = fontSmall.render('HARD', True, 'black')
-                screen.blit(t3, (450, 400))
+                screen.blit(t3, (470, 405))
                 pygame.display.flip()
                 clock.tick(60)
 
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if pygame.mouse.get_pos()[0] > 100 and pygame.mouse.get_pos()[0] < 200 and \
+                        if pygame.mouse.get_pos()[0] > 63.75 and pygame.mouse.get_pos()[0] < (63.75+125) and \
                                 pygame.mouse.get_pos()[1] > 400 and pygame.mouse.get_pos()[1] < 450:
                             diff = 'easy'
                             running = 'game'
-                        elif pygame.mouse.get_pos()[0] > 250 and pygame.mouse.get_pos()[0] < 400 and \
+                        elif pygame.mouse.get_pos()[0] > 252.5 and pygame.mouse.get_pos()[0] < (252.5+125) and \
                                 pygame.mouse.get_pos()[1] > 400 and pygame.mouse.get_pos()[0] < 450:
                             diff = 'medium'
                             running = 'game'
-                        elif pygame.mouse.get_pos()[0] > 450 and pygame.mouse.get_pos()[0] < 550 and \
+                        elif pygame.mouse.get_pos()[0] > 441.25 and pygame.mouse.get_pos()[0] < (441.25+125) and \
                                 pygame.mouse.get_pos()[1] > 400 and pygame.mouse.get_pos()[1] < 450:
                             diff = 'hard'
                             running = 'game'
@@ -86,6 +91,7 @@ def main():
                         pygame.quit()
             board = Board(630, 630, screen, diff)
             hold = True
+            board.select(translateX(y1new), translateX(x1new))
             while running == 'game':
 
                 if board.is_full():
@@ -102,14 +108,16 @@ def main():
                     if event.type == pygame.QUIT:
                         running = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if pygame.mouse.get_pos()[0] > 100 and pygame.mouse.get_pos()[0] < 200 and \
+                        #reset button
+                        if pygame.mouse.get_pos()[0] > 63.75 and pygame.mouse.get_pos()[0] < (63.75 + 125) and \
                                 pygame.mouse.get_pos()[1] > 640 and pygame.mouse.get_pos()[1] < 690:
                             board.reset_to_original()
-                        elif pygame.mouse.get_pos()[0] > 250 and pygame.mouse.get_pos()[0] < 400 and \
+                        #restart button
+                        elif pygame.mouse.get_pos()[0] > 252.5 and pygame.mouse.get_pos()[0] < (252.5 + 125) and \
                                 pygame.mouse.get_pos()[1] > 640 and pygame.mouse.get_pos()[0] < 690:
-
                             hold = False
-                        elif pygame.mouse.get_pos()[0] > 450 and pygame.mouse.get_pos()[0] < 550 and \
+                        #quit button
+                        elif pygame.mouse.get_pos()[0] > 441.25 and pygame.mouse.get_pos()[0] < (441.25 + 125) and \
                                 pygame.mouse.get_pos()[1] > 640 and pygame.mouse.get_pos()[1] < 690:
                             pygame.quit()
                         else:
@@ -124,6 +132,7 @@ def main():
                                     x1new = rows[i - 1]
                                     x2new = rows[i]
                                     break
+
                             for i in range(len(cols)):
                                 if cols[i] > eventpos[1]:
                                     y1new = cols[i - 1]
@@ -150,9 +159,9 @@ def main():
                         elif event.key == pygame.K_9:
                             board.sketch(9)
                         elif event.key == pygame.K_RETURN:
-
-                            board.currCell.value = board.currCell.sketchedval
-                            board.currCell.sketchedval = 0
+                            if not board.currCell.isOG:
+                                board.currCell.value = board.currCell.sketchedval
+                                board.currCell.sketchedval = 0
 
                         elif event.key == pygame.K_BACKSPACE:
                             if not board.currCell.isOG:
@@ -186,7 +195,7 @@ def main():
 
                 # if selected:
                 #     board.select(board.click(x, y)[0], board.click(x, y)[1])
-                screen.fill("pink")
+                screen.fill("white")
                 board.draw()
                 pygame.draw.line(screen, 'red', (x1new, y1new), (x1new, y2new), width=3)
                 pygame.draw.line(screen, 'red', (x1new, y1new), (x2new, y1new), width=3)
@@ -196,20 +205,21 @@ def main():
                 pygame.display.flip()
                 clock.tick(60)
             while running == 'win':
-                fontSmall = pygame.font.SysFont('Arial', 30)
+                fontBig = pygame.font.SysFont('Arial', 60)
                 screen.fill("white")
-                text1 = fontSmall.render('YOU WIN!', True, 'black')
-                screen.blit(text1, (200, 300))
+                pygame.draw.rect(screen, (231, 209, 255), (0, 0, 630, 700))
+                text1 = fontBig.render('YOU WIN!', True, 'black')
+                screen.blit(text1, (200, 220))
 
-                pygame.draw.rect(screen, (173, 216, 230), (250, 400, 150, 50))
+                pygame.draw.rect(screen, (255, 255, 255), (252.5, 400, 125, 50))
 
                 t2 = fontSmall.render('Exit', True, 'black')
-                screen.blit(t2, (250, 400))
+                screen.blit(t2, (295, 405))
 
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
 
-                        if pygame.mouse.get_pos()[0] > 250 and pygame.mouse.get_pos()[0] < 400 and \
+                        if pygame.mouse.get_pos()[0] > 252.5 and pygame.mouse.get_pos()[0] < (252.5+125) and \
                                 pygame.mouse.get_pos()[1] > 400 and pygame.mouse.get_pos()[0] < 450:
                             pygame.quit()
 
@@ -218,25 +228,27 @@ def main():
 
             while running == 'lose':
                 fontSmall = pygame.font.SysFont('Arial', 30)
+                fontBig = pygame.font.SysFont('Arial', 60)
                 screen.fill("white")
-                text1 = fontSmall.render('YOU LOSE!', True, 'black')
-                screen.blit(text1, (200, 300))
-                pygame.draw.rect(screen, (173, 216, 230), (100, 400, 100, 50))
+                pygame.draw.rect(screen, (231, 209, 255), (0, 0, 630, 700))
+                text1 = fontBig.render('YOU LOSE!', True, 'black')
+                screen.blit(text1, (195, 200))
+                pygame.draw.rect(screen, (255, 255, 255), (127.25, 400, 125, 50))
 
-                pygame.draw.rect(screen, (173, 216, 230), (450, 400, 100, 50))
+                pygame.draw.rect(screen, (255, 255, 255), (377.25, 400, 125, 50))
                 text = fontSmall.render('Restart', True, 'black')
-                screen.blit(text, (100, 400))
+                screen.blit(text, (147.5, 405))
 
                 t3 = fontSmall.render('Quit', True, 'black')
-                screen.blit(t3, (450, 400))
+                screen.blit(t3, (415, 405))
 
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if pygame.mouse.get_pos()[0] > 100 and pygame.mouse.get_pos()[0] < 200 and \
+                        if pygame.mouse.get_pos()[0] > 127.25 and pygame.mouse.get_pos()[0] < (127.25+125) and \
                                 pygame.mouse.get_pos()[1] > 400 and pygame.mouse.get_pos()[1] < 450:
                             running = 'game'
 
-                        elif pygame.mouse.get_pos()[0] > 450 and pygame.mouse.get_pos()[0] < 550 and \
+                        elif pygame.mouse.get_pos()[0] > 377.25 and pygame.mouse.get_pos()[0] < (377.25+125) and \
                                 pygame.mouse.get_pos()[1] > 400 and pygame.mouse.get_pos()[1] < 450:
                             pygame.quit()
 
