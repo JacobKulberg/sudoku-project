@@ -77,7 +77,11 @@ class Board:
     def reset_to_original(self):
         for i in range(0, 9):
             for j in range(0, 9):
-                self.cells[i][j].set_sketched_value(0)
+                cell = self.cells[i][j]
+                if cell.is_finalized:
+                    cell.value = 0
+                else:
+                    self.cells[i][j].set_sketched_value(0)
         self.selected = None
     def is_full(self):
         for row in self.cells:
