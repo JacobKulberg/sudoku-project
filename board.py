@@ -7,7 +7,7 @@ from sudoku_generator import SudokuGenerator
 class Board:
     #difficulty is gonna be a number, easy = 1, med = 2, hard = 3
     def __init__(self, width, height, screen, difficulty):
-        sudoku = SudokuGenerator(9, 20+(difficulty*10))
+        sudoku = SudokuGenerator(9, 0+(difficulty*1))
         sudoku.fill_values()
         self.key = deepcopy(sudoku.get_board())
         sudoku.remove_cells()
@@ -108,6 +108,11 @@ class Board:
         #check if board is solved correctly
         for i in range(0,9):
             for j in range(0,9):
+                if self.cells[i][j].value == self.key[i][j]:
+                    continue
+                elif self.cells[i][j].value != 0 and self.cells[i][j].value != self.key[i][j]:
+                    return False
+
                 if self.cells[i][j].sketched_value != 0 and self.cells[i][j].sketched_value != self.key[i][j]:
                     return False
         return True
