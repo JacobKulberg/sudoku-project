@@ -111,11 +111,13 @@ class Board:
                 if self.cells[i][j].value == self.key[i][j]:
                     continue
                 elif self.cells[i][j].value != 0 and self.cells[i][j].value != self.key[i][j]:
+                    print(i,j)
                     return False
-
-                if self.cells[i][j].sketched_value != 0 and self.cells[i][j].sketched_value != self.key[i][j]:
+                elif self.cells[i][j].sketched_value != 0 and self.cells[i][j].sketched_value != self.key[i][j]:
+                    print(i,j)
                     return False
         return True
+
     def move_selection(self, direction):
         row, col = self.selected
 
