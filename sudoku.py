@@ -130,7 +130,7 @@ def main():
     font = pygame.font.Font(None, 30)
 
     difficulty = start_screen(screen)
-    board = Board(WIDTH, HEIGHT, screen, difficulty)
+    board = Board(WIDTH, HEIGHT-60, screen, difficulty)
     screen.fill(BG_COLOR)
 
     while True:
