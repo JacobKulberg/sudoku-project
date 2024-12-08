@@ -1,6 +1,5 @@
 import pygame, sys
 from board import Board
-from sudoku_generator import SudokuGenerator
 
 WIDTH = 540
 HEIGHT = 600
@@ -46,7 +45,6 @@ def draw_game_buttons(screen, font):
 
     return button_positions
 
-
 def start_screen(screen):
     """Displays the start screen where the user selects difficulty."""
     screen.fill(PINK)
@@ -80,7 +78,7 @@ def start_screen(screen):
 
 def game_over_screen(screen, win):
     """Displays the game over screen with success or failure message."""
-    screen.fill(BG_COLOR)
+    screen.fill(PINK)
     font = pygame.font.Font(None, 50)
 
     if win:
@@ -90,7 +88,30 @@ def game_over_screen(screen, win):
 
     message_rect = message.get_rect(center=(WIDTH // 2, HEIGHT // 2))
     screen.blit(message, message_rect)
+
+    font = pygame.font.Font(None, 30)
+    button_x = WIDTH // 2 - BUTTON_WIDTH // 2
+    pygame.draw.rect(screen, WHITE, (button_x, 400, BUTTON_WIDTH, 40))
+    pygame.draw.rect(screen, DARK_PINK, (button_x, 400, BUTTON_WIDTH, 40), 4)
+
+    surface = font.render("RESTART", 0, BLACK)
+    screen.blit(surface, surface.get_rect(center=(button_x + BUTTON_WIDTH//2, 420)))
+
     pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+
+                if button_x <= x <= button_x + BUTTON_WIDTH and 400 <= y <= 440:
+                    return 1  #Just so it will end the loop
+
+def sudoku_screen(screen, board):
+    board.draw()
 
 
 def main():
@@ -102,13 +123,12 @@ def main():
 
     difficulty = start_screen(screen)
     board = Board(WIDTH, HEIGHT, screen, difficulty)
+    screen.fill(BG_COLOR)
 
     while True:
-        screen.fill(BG_COLOR)
+
         board.draw()
-
         button_positions = draw_game_buttons(screen, font)
-
         pygame.display.flip()
 
         for event in pygame.event.get():
@@ -117,6 +137,8 @@ def main():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
+
+                #Game button functionality
                 for index, (bx, by, bwidth, bheight) in enumerate(button_positions):
                     if bx <= x <= bx + bwidth and by <= y <= by + bheight:
                         if index == 0:  # RESET
@@ -127,17 +149,25 @@ def main():
                         elif index == 2:  # EXIT
                             pygame.quit()
                             sys.exit()
+
+                #Cell selection functionality
                 clicked_cell = board.click(x, y)
                 if clicked_cell:
                     board.select(clicked_cell[0], clicked_cell[1])
             elif event.type == pygame.KEYDOWN:
+                #Key events
                 if event.key == pygame.K_RETURN:
+                    #Finalizing values
                     if board.selected:
                         row, col = board.selected
                         board.cells[row][col].finalize_value()
+
+                    #Ends game and checks if all values are correct
                     if board.is_full():
                         win = board.check_board()
                         game_over_screen(screen, win)
+                        difficulty = start_screen(screen)
+                        board = Board(WIDTH, WIDTH, screen, difficulty)
                 elif pygame.K_1 <= event.key <= pygame.K_9:
                     value = event.key - pygame.K_0
                     board.sketch(value)
