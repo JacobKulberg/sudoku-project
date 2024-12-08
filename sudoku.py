@@ -94,7 +94,12 @@ def game_over_screen(screen, win):
     pygame.draw.rect(screen, WHITE, (button_x, 400, BUTTON_WIDTH, 40))
     pygame.draw.rect(screen, DARK_PINK, (button_x, 400, BUTTON_WIDTH, 40), 4)
 
-    surface = font.render("RESTART", 0, BLACK)
+    if win:
+        text = "EXIT"
+    else:
+        text = "RESTART"
+
+    surface = font.render(text, 0, BLACK)
     screen.blit(surface, surface.get_rect(center=(button_x + BUTTON_WIDTH//2, 420)))
 
     pygame.display.flip()
@@ -108,7 +113,10 @@ def game_over_screen(screen, win):
                 x, y = event.pos
 
                 if button_x <= x <= button_x + BUTTON_WIDTH and 400 <= y <= 440:
-                    return 1  #Just so it will end the loop
+                    if win:
+                        pygame.quit()
+                        sys.exit()
+                    return 1  #So the loop will end and game will restart
 
 def sudoku_screen(screen, board):
     board.draw()
