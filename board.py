@@ -51,9 +51,14 @@ class Board:
         self.selected = (row, col)
 
     def click(self, x, y):
-        if (x<= self.width) and (y <=self.height):
-            row = int(y/(self.width/9))
-            col = int(x/(self.height/9))
+        size_x = self.width / 9
+        size_y = self.height / 9
+        if (x <= self.width) and (y <= self.height):
+            for i in range(0, 9):
+                if (x <= (i + 1) * size_x) and (x >= i * size_x):
+                    col = i
+                if (y <= (i + 1) * size_y) and (y >= i * size_y):
+                    row = i
             return (row, col)
         return None
 
