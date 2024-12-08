@@ -118,10 +118,6 @@ def game_over_screen(screen, win):
                         sys.exit()
                     return 1  #So the loop will end and game will restart
 
-def sudoku_screen(screen, board):
-    board.draw()
-
-
 def main():
     """Main function to run the game."""
     pygame.init()
