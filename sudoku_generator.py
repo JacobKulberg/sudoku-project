@@ -224,7 +224,15 @@ class SudokuGenerator:
 	Return: None
     '''
     def remove_cells(self):
-        pass
+        removed = set()
+
+        while len(removed) < self.removed_cells:
+            r = random.randint(0, self.row_length - 1)
+            c = random.randint(0, self.row_length - 1)
+
+            if (r, c) not in removed:
+                self.board[r][c] = 0
+                removed.add((r, c))
 
 '''
 DO NOT CHANGE
