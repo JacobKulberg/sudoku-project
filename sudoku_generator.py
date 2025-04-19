@@ -45,7 +45,10 @@ class SudokuGenerator:
 	Return: None
     '''
     def print_board(self):
-        pass
+        for r in self.board:
+            for c in r:
+                print(c, end=' ')
+            print()
 
     '''
 	Determines if num is contained in the specified row (horizontal) of the board
