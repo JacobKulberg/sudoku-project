@@ -1,6 +1,6 @@
 import pygame, sys
 from sudoku_generator import *
-#background rgb
+#some rgb colors
 bg = (239, 235, 216)
 bg_contrast = (31, 30, 28)
 #initializing pygame window
@@ -22,14 +22,14 @@ def start_screen():
     screen.fill(bg)
 
     #rendering the text onto surfaces
-    tit_text = tit_font.render("Sudoku", 0, bg_contrast)
-    start_text = button_font.render("Start", 0, bg)
-    exit_text = button_font.render("Exit", 0, bg)
+    tit_text = tit_font.render("Sudoku", False, bg_contrast)
+    start_text = button_font.render("Start", False, bg)
+    exit_text = button_font.render(" Exit ", False, bg)
 
     #creating surfaces
     tit_surf = tit_text.get_rect(center = (720//2, 790//2 - 150))
     start_surface = pygame.Surface((start_text.get_size()[0] + 20, start_text.get_size()[1] + 20))
-    exit_surface = pygame.Surface((exit_text.get_size()[0] + 20, exit_text.get_size()[1] + 20))
+    exit_surface = pygame.Surface((exit_text.get_size()[0] + 25, exit_text.get_size()[1] + 20))
 
     #coloring buttons hehe
     start_surface.fill(bg_contrast)
@@ -58,17 +58,18 @@ def start_screen():
         pygame.display.update()
 
 
+
 def grids():
     #light lines
     for i in range(1, 9):
         #horizontals
-        pygame.draw.line(screen, "black", (0, i * 80), (720, i * 80))
+        pygame.draw.line(screen, bg_contrast, (0, i * 80), (720, i * 80))
         #verticals
-        pygame.draw.line(screen, "black", (i * 80, 0), (i * 80, 720))
+        pygame.draw.line(screen, bg_contrast, (i * 80, 0), (i * 80, 720))
     #heavy/box lines
     for i in range(1, 3):
-        pygame.draw.line(screen, "black", (0, i * 240), (720, i * 240), 3)
-        pygame.draw.line(screen, "black", (i * 240, 0), (i * 240, 720), 3)
+        pygame.draw.line(screen, bg_contrast, (0, i * 240), (720, i * 240), 3)
+        pygame.draw.line(screen, bg_contrast, (i * 240, 0), (i * 240, 720), 3)
 
 #hype moments and aura
 if __name__ == '__main__':
