@@ -17,14 +17,14 @@ solution = sudoku.get_board()
 def start_screen():
     #creating font
     tit_font = pygame.font.SysFont("comicsans", 120, True)
-    button_font = pygame.font.SysFont("comicsans", 90)
+    button_font = pygame.font.SysFont("comicsans", 70)
 
     screen.fill(bg)
 
     #rendering the text onto surfaces
-    tit_text = tit_font.render("Sudoku", True, bg_contrast)
-    start_text = button_font.render("Start", True, (255, 255, 255))
-    exit_text = button_font.render("Exit", True, (255, 255, 255))
+    tit_text = tit_font.render("Sudoku", 0, bg_contrast)
+    start_text = button_font.render("Start", 0, bg)
+    exit_text = button_font.render("Exit", 0, bg)
 
     #creating surfaces
     tit_surf = tit_text.get_rect(center = (720//2, 790//2 - 150))
@@ -41,8 +41,8 @@ def start_screen():
     exit_surface.blit(exit_text, (10,10))
 
     #making those buttons
-    start_rect = start_surface.get_rect(center = (720//2, 790//2 + 50))
-    exit_rect = exit_surface.get_rect(center = (720//2, 790//2 + 120))
+    start_rect = start_surface.get_rect(center = (720//2, 790//2 + 30))
+    exit_rect = exit_surface.get_rect(center = (720//2, 790//2 + 170))
     screen.blit(start_surface, start_rect)
     screen.blit(exit_surface, exit_rect)
 
@@ -51,7 +51,11 @@ def start_screen():
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-
+                if start_rect.collidepoint(event.pos):
+                    return
+                elif exit_rect.collidepoint(event.pos):
+                    sys.exit()
+        pygame.display.update()
 
 
 def grids():
@@ -68,6 +72,7 @@ def grids():
 
 #hype moments and aura
 if __name__ == '__main__':
+    start_screen()
     screen.fill(bg)
     grids()
 
