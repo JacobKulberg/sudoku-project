@@ -2,13 +2,17 @@ import pygame, sys
 from sudoku_generator import *
 import copy
 
+# width and height constants
+WIDTH = 726
+HEIGHT = 796
+
 #some rgb colors
 bg = (239, 235, 216)
 bg_contrast = (31, 30, 28)
 
 #initializing pygame window
 pygame.init()
-screen = pygame.display.set_mode((720, 790))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sudoku")
 
 # Difficulty settings: number of cells to remove per level
