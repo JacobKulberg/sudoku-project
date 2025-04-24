@@ -1,12 +1,57 @@
 import pygame, sys
 from sudoku_generator import *
+import copy
+
 #some rgb colors
 bg = (239, 235, 216)
 bg_contrast = (31, 30, 28)
+
 #initializing pygame window
 pygame.init()
 screen = pygame.display.set_mode((720, 790))
 pygame.display.set_caption("Sudoku")
+
+# Difficulty settings: number of cells to remove per level
+DIFFICULTY_LEVELS = {
+    'easy': 35,
+    'medium': 45,
+    'hard': 55
+}
+
+# Font for rendering numbers on the grid
+def get_number_font():
+    return pygame.font.SysFont("comicsans", 40)
+
+def generate_puzzle(difficulty):
+    """
+    Generates a Sudoku puzzle and its solution based on difficulty.
+
+    Parameters:
+        difficulty (str): 'easy', 'medium', or 'hard'
+
+    Returns:
+        tuple: (puzzle_board, solution_board) as 2D lists
+    """
+    removed = DIFFICULTY_LEVELS.get(difficulty, DIFFICULTY_LEVELS['easy'])
+    sudoku = SudokuGenerator(9, removed)
+    sudoku.fill_values()
+    solution = copy.deepcopy(sudoku.get_board())
+    sudoku.remove_cells()
+    puzzle = sudoku.get_board()
+    return puzzle, solution
+
+#draw the grid lines
+def grids():
+    #light lines
+    for i in range(1, 9):
+        #horizontals
+        pygame.draw.line(screen, bg_contrast, (0, i * 80), (720, i * 80))
+        #verticals
+        pygame.draw.line(screen, bg_contrast, (i * 80, 0), (i * 80, 720))
+    #heavy/box lines
+    for i in range(1, 3):
+        pygame.draw.line(screen, bg_contrast, (0, i * 240), (720, i * 240), 3)
+        pygame.draw.line(screen, bg_contrast, (i * 240, 0), (i * 240, 720), 3)
 
 #initializing a sudoku board and saving the solution
 sudoku = SudokuGenerator(9, 0)
@@ -59,26 +104,36 @@ def start_screen():
 
 
 
-def grids():
-    #light lines
-    for i in range(1, 9):
-        #horizontals
-        pygame.draw.line(screen, bg_contrast, (0, i * 80), (720, i * 80))
-        #verticals
-        pygame.draw.line(screen, bg_contrast, (i * 80, 0), (i * 80, 720))
-    #heavy/box lines
-    for i in range(1, 3):
-        pygame.draw.line(screen, bg_contrast, (0, i * 240), (720, i * 240), 3)
-        pygame.draw.line(screen, bg_contrast, (i * 240, 0), (i * 240, 720), 3)
 
-#hype moments and aura
+
+# hype moments and aura
 if __name__ == '__main__':
-    start_screen()
-    screen.fill(bg)
-    grids()
+    # Prompt for difficulty level
+    difficulty = input("Choose difficulty (easy, medium, hard): ").lower()
+    puzzle_board, solution = generate_puzzle(difficulty)
 
+    # Show start screen
+    start_screen()
+
+    number_font = get_number_font()
+
+    # Main game loop
     while True:
+        screen.fill(bg)
+        grids()
+
+        # Render puzzle numbers
+        for r in range(9):
+            for c in range(9):
+                value = puzzle_board[r][c]
+                if value != 0:
+                    text_surf = number_font.render(str(value), True, bg_contrast)
+                    text_rect = text_surf.get_rect(center=(c * 80 + 40, r * 80 + 40))
+                    screen.blit(text_surf, text_rect)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            # TODO: handle user input for selecting and filling cells
+
         pygame.display.update()
