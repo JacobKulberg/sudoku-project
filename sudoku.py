@@ -49,13 +49,14 @@ def grids():
     #light lines
     for i in range(1, 9):
         #horizontals
-        pygame.draw.line(screen, bg_contrast, (0, i * 80), (720, i * 80))
+        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH//9), (WIDTH, i * WIDTH//9))
         #verticals
-        pygame.draw.line(screen, bg_contrast, (i * 80, 0), (i * 80, 720))
+        pygame.draw.line(screen, bg_contrast, (i * WIDTH//9, 0), (i * WIDTH//9, WIDTH))
+
     #heavy/box lines
-    for i in range(1, 3):
-        pygame.draw.line(screen, bg_contrast, (0, i * 240), (720, i * 240), 3)
-        pygame.draw.line(screen, bg_contrast, (i * 240, 0), (i * 240, 720), 3)
+    for i in range(4):
+        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH//3), (WIDTH, i * WIDTH//3), 3)
+        pygame.draw.line(screen, bg_contrast, (i * WIDTH//3, 0), (i * WIDTH//3, WIDTH), 3)
 
 #initializing a sudoku board and saving the solution
 sudoku = SudokuGenerator(9, 0)
@@ -76,7 +77,7 @@ def start_screen():
     exit_text = button_font.render(" Exit ", False, bg)
 
     #creating surfaces
-    tit_surf = tit_text.get_rect(center = (720//2, 790//2 - 150))
+    tit_surf = tit_text.get_rect(center = (WIDTH//2, HEIGHT//2 - 150))
     start_surface = pygame.Surface((start_text.get_size()[0] + 20, start_text.get_size()[1] + 20))
     exit_surface = pygame.Surface((exit_text.get_size()[0] + 25, exit_text.get_size()[1] + 20))
 
@@ -90,8 +91,8 @@ def start_screen():
     exit_surface.blit(exit_text, (10,10))
 
     #making those buttons
-    start_rect = start_surface.get_rect(center = (720//2, 790//2 + 30))
-    exit_rect = exit_surface.get_rect(center = (720//2, 790//2 + 170))
+    start_rect = start_surface.get_rect(center = (WIDTH//2, HEIGHT//2 + 30))
+    exit_rect = exit_surface.get_rect(center = (WIDTH//2, HEIGHT//2 + 170))
     screen.blit(start_surface, start_rect)
     screen.blit(exit_surface, exit_rect)
 
@@ -120,7 +121,7 @@ def select_difficulty():
     hard_difficulty_text = button_font.render("Hard ", False, bg)
 
     # creating surfaces
-    tit_surf = tit_text.get_rect(center=(720 // 2, 790 // 2 - 50))
+    tit_surf = tit_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
     easy_difficulty_surface = pygame.Surface((easy_difficulty_text.get_size()[0] + 20, easy_difficulty_text.get_size()[1] + 20))
     medium_difficulty_surface = pygame.Surface((medium_difficulty_text.get_size()[0] + 20, medium_difficulty_text.get_size()[1] + 20))
     hard_difficulty_surface = pygame.Surface((hard_difficulty_text.get_size()[0] + 20, hard_difficulty_text.get_size()[1] + 20))
@@ -137,9 +138,9 @@ def select_difficulty():
     hard_difficulty_surface.blit(hard_difficulty_text, (10, 10))
 
     # making those buttons
-    easy_difficulty_rect = easy_difficulty_surface.get_rect(center=(720 // 2 - 215, 790 // 2 + 70))
-    medium_difficulty_rect = medium_difficulty_surface.get_rect(center=(720 // 2, 790 // 2 + 70))
-    hard_difficulty_rect = hard_difficulty_surface.get_rect(center=(720 // 2 + 230, 790 // 2 + 70))
+    easy_difficulty_rect = easy_difficulty_surface.get_rect(center=(WIDTH // 2 - 215, HEIGHT // 2 + 70))
+    medium_difficulty_rect = medium_difficulty_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70))
+    hard_difficulty_rect = hard_difficulty_surface.get_rect(center=(WIDTH // 2 + 230, HEIGHT // 2 + 70))
     screen.blit(easy_difficulty_surface, easy_difficulty_rect)
     screen.blit(medium_difficulty_surface, medium_difficulty_rect)
     screen.blit(hard_difficulty_surface, hard_difficulty_rect)
