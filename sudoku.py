@@ -13,9 +13,9 @@ pygame.display.set_caption("Sudoku")
 
 # Difficulty settings: number of cells to remove per level
 DIFFICULTY_LEVELS = {
-    'easy': 35,
-    'medium': 45,
-    'hard': 55
+    'easy': 30,
+    'medium': 40,
+    'hard': 50
 }
 
 # Font for rendering numbers on the grid
