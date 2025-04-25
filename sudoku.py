@@ -209,31 +209,15 @@ def get_tile_pos(mouse_pos):
 
 # hype moments and aura
 if __name__ == '__main__':
+    selected_tile = None
+    temp_input = None  # stores number before ENTER
 
-    # Main game loop
     while True:
         if start:
-            # Show start screen and difficulty selection
             difficulty = start_screen()
-            screen.fill(bg)
-            grids()
-
-            res, men, ex = menu()
-
             puzzle_board, solution, initial = generate_puzzle(difficulty)
-
             number_font = get_number_font()
-
-            selected_tile = None
-
-            # Render puzzle numbers
-            for r in range(9):
-                for c in range(9):
-                    value = puzzle_board[r][c]
-                    if value != 0:
-                        text_surf = number_font.render(str(value), True, bg_contrast)
-                        text_rect = text_surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
-                        screen.blit(text_surf, text_rect)
+            res, men, ex = menu()
             start = False
 
         for event in pygame.event.get():
@@ -242,42 +226,67 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if res.collidepoint(event.pos):
                     puzzle_board = copy.deepcopy(initial)
+                    temp_input = None
                 elif men.collidepoint(event.pos):
                     start = True
                 elif ex.collidepoint(event.pos):
                     sys.exit()
                 else:
                     pos = get_tile_pos(event.pos)
-                    if pos:
+                    if pos and initial[pos[0]][pos[1]] == 0:
                         selected_tile = pos
+                        temp_input = None
             if event.type == pygame.KEYDOWN:
-                if selected_tile and event.unicode in '123456789':
+                if selected_tile:
                     r, c = selected_tile
-                    if puzzle_board[r][c] == 0:
-                        puzzle_board[r][c] = int(event.unicode)
-                        
-        #Updates board with user input
+                    if event.key == pygame.K_UP:
+                        selected_tile = ((r - 1) % 9, c)
+                        temp_input = None
+                    elif event.key == pygame.K_DOWN:
+                        selected_tile = ((r + 1) % 9, c)
+                        temp_input = None
+                    elif event.key == pygame.K_LEFT:
+                        selected_tile = (r, (c - 1) % 9)
+                        temp_input = None
+                    elif event.key == pygame.K_RIGHT:
+                        selected_tile = (r, (c + 1) % 9)
+                        temp_input = None
+                    elif event.unicode in '123456789':
+                        temp_input = int(event.unicode)
+                    elif event.key == pygame.K_RETURN and temp_input is not None:
+                        if initial[r][c] == 0:
+                            puzzle_board[r][c] = temp_input
+                        temp_input = None
+
+        # Rendering
         screen.fill(bg)
         grids()
         menu()
+
+        # Highlight selected cell
         if selected_tile:
             r, c = selected_tile
-            selector = pygame.Surface((CELL_LENGTH - 1, CELL_LENGTH - 1))
-            pygame.draw.rect(screen, baby_blue,
-                             selector.get_rect(center = (c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2)))
+            highlight = pygame.Surface((CELL_LENGTH - 1, CELL_LENGTH - 1))
+            highlight.fill(baby_blue)
+            screen.blit(highlight, (c * CELL_LENGTH + 1, r * CELL_LENGTH + 1))
             grids()
+
+        # Draw numbers
         for r in range(9):
             for c in range(9):
-                value = puzzle_board[r][c]
-                if value != 0 and initial[r][c] == value:
-                    text_surf = number_font.render(str(value), True, bg_contrast)
-                    text_rect = text_surf.get_rect(
+                val = puzzle_board[r][c]
+                if val != 0:
+                    color = bg_contrast if initial[r][c] == val else grite
+                    surf = number_font.render(str(val), True, color)
+                    rect = surf.get_rect(
                         center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
-                    screen.blit(text_surf, text_rect)
-                elif value !=0 and initial[r][c] != value:
-                    text_surf = number_font.render(str(value), True, grite)
-                    text_rect = text_surf.get_rect(
-                        center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
-                    screen.blit(text_surf, text_rect)
+                    screen.blit(surf, rect)
+
+        # Draw temp input
+        if selected_tile and temp_input:
+            r, c = selected_tile
+            surf = number_font.render(str(temp_input), True, grite)
+            rect = surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
+            screen.blit(surf, rect)
 
         pygame.display.update()
