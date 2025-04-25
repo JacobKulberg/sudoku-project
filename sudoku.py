@@ -3,8 +3,10 @@ from sudoku_generator import *
 import copy
 
 # width and height constants
-WIDTH = 726
-HEIGHT = 726
+WIDTH = 720
+HEIGHT = 720
+CELL_LENGTH = WIDTH // 9
+BOX_LENGTH = WIDTH // 3
 SIDE_WIDTH = 300
 SCREEN_WIDTH = WIDTH + SIDE_WIDTH
 SCREEN_HEIGHT = HEIGHT + 2
@@ -12,6 +14,7 @@ SCREEN_HEIGHT = HEIGHT + 2
 #some rgb colors
 bg = (239, 235, 216)
 bg_contrast = (31, 30, 28)
+baby_blue = (180, 180, 255)
 
 #initializing pygame window
 pygame.init()
@@ -46,7 +49,14 @@ def generate_puzzle(difficulty):
     solution = copy.deepcopy(sudoku.get_board())
     sudoku.remove_cells()
     puzzle = sudoku.get_board()
-    return puzzle, solution
+    initial = copy.deepcopy(sudoku.get_board())
+    return puzzle, solution, initial
+
+def big_grids():
+    # heavy/box lines
+    for i in range(4):
+        pygame.draw.line(screen, bg_contrast, (0, i * BOX_LENGTH), (WIDTH, i * BOX_LENGTH), 3)
+        pygame.draw.line(screen, bg_contrast, (i * BOX_LENGTH, 0), (i * BOX_LENGTH, HEIGHT), 3)
 
 #draw the grid lines
 def grids():
@@ -54,14 +64,11 @@ def grids():
     #light lines
     for i in range(1, 9):
         #horizontals
-        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH // 9), (WIDTH, i * WIDTH // 9))
+        pygame.draw.line(screen, bg_contrast, (0, i * CELL_LENGTH), (WIDTH, i * CELL_LENGTH))
         #verticals
-        pygame.draw.line(screen, bg_contrast, (i * WIDTH // 9, 0), (i * WIDTH // 9, WIDTH))
+        pygame.draw.line(screen, bg_contrast, (i * CELL_LENGTH, 0), (i * CELL_LENGTH, HEIGHT))
 
-    #heavy/box lines
-    for i in range(4):
-        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH // 3), (WIDTH, i * WIDTH // 3), 3)
-        pygame.draw.line(screen, bg_contrast, (i * WIDTH // 3, 0), (i * WIDTH // 3, WIDTH), 3)
+    big_grids()
 
     #menu options
     menu_font = pygame.font.SysFont("comicsans", 30)
@@ -198,7 +205,7 @@ def select_difficulty():
 # Mouse click selects tile
 def get_tile_pos(mouse_pos):
         x, y = mouse_pos
-        if x >= WIDTH:
+        if x >= WIDTH or y >= HEIGHT:
             return None
         row = y // (WIDTH//9)
         col = x // (WIDTH//9)
@@ -215,7 +222,7 @@ if __name__ == '__main__':
 
             res, men, ex = grids()
 
-            puzzle_board, solution = generate_puzzle(difficulty)
+            puzzle_board, solution, initial = generate_puzzle(difficulty)
 
             number_font = get_number_font()
 
@@ -227,7 +234,7 @@ if __name__ == '__main__':
                     value = puzzle_board[r][c]
                     if value != 0:
                         text_surf = number_font.render(str(value), True, bg_contrast)
-                        text_rect = text_surf.get_rect(center=(c * WIDTH//9 + 40, r * WIDTH//9 + 40))
+                        text_rect = text_surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
                         screen.blit(text_surf, text_rect)
             start = False
 
@@ -235,7 +242,9 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if men.collidepoint(event.pos):
+                if res.collidepoint(event.pos):
+                    puzzle_board = copy.deepcopy(initial)
+                elif men.collidepoint(event.pos):
                     start = True
                 elif ex.collidepoint(event.pos):
                     sys.exit()
@@ -253,14 +262,16 @@ if __name__ == '__main__':
         grids()
         if selected_tile:
             r, c = selected_tile
-            pygame.draw.rect(screen, (180, 180, 255),
-                             pygame.Rect(c * WIDTH // 9, r * WIDTH // 9, WIDTH // 9, WIDTH // 9))
+            selector = pygame.Surface((CELL_LENGTH - 1, CELL_LENGTH - 1))
+            pygame.draw.rect(screen, baby_blue,
+                             selector.get_rect(center = (c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2)))
+            big_grids()
         for r in range(9):
             for c in range(9):
                 value = puzzle_board[r][c]
                 if value != 0:
                     text_surf = number_font.render(str(value), True, bg_contrast)
-                    text_rect = text_surf.get_rect(center=(c * WIDTH // 9 + 40, r * WIDTH // 9 + 40))
+                    text_rect = text_surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
                     screen.blit(text_surf, text_rect)
 
         pygame.display.update()
