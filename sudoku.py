@@ -58,41 +58,40 @@ def grids():
         pygame.draw.line(screen, bg_contrast, (0, i * WIDTH//3), (WIDTH, i * WIDTH//3), 3)
         pygame.draw.line(screen, bg_contrast, (i * WIDTH//3, 0), (i * WIDTH//3, WIDTH), 3)
 
-#initializing a sudoku board and saving the solution
-sudoku = SudokuGenerator(9, 0)
-sudoku.fill_values()
-solution = sudoku.get_board()
-
 #you get the idea
 def start_screen():
     #creating font
-    tit_font = pygame.font.SysFont("comicsans", 120, True)
-    button_font = pygame.font.SysFont("comicsans", 70)
+    subtit_font = pygame.font.SysFont("comicsans", 25)
+    tit_font = pygame.font.SysFont("comicsans", 95, True)
+    button_font = pygame.font.SysFont("comicsans", 50)
 
     screen.fill(bg)
 
     #rendering the text onto surfaces
-    tit_text = tit_font.render("Sudoku", False, bg_contrast)
-    start_text = button_font.render("Start", False, bg)
-    exit_text = button_font.render(" Exit ", False, bg)
+    subtit_text = subtit_font.render("WELCOME TO...", True, bg_contrast)
+    tit_text = tit_font.render("SUDOKU!", True, bg_contrast)
+    start_text = button_font.render("START", True, bg)
+    exit_text = button_font.render("EXIT", True, bg)
 
     #creating surfaces
-    tit_surf = tit_text.get_rect(center = (WIDTH//2, HEIGHT//2 - 150))
-    start_surface = pygame.Surface((start_text.get_size()[0] + 20, start_text.get_size()[1] + 20))
-    exit_surface = pygame.Surface((exit_text.get_size()[0] + 25, exit_text.get_size()[1] + 20))
+    subtit_surf = subtit_text.get_rect(center = (WIDTH // 2, HEIGHT // 2 - 200))
+    tit_surf = tit_text.get_rect(center = (WIDTH // 2, HEIGHT // 2 - 150))
+    start_surface = pygame.Surface((start_text.get_size()[0] + 20, start_text.get_size()[1] + 12))
+    exit_surface = pygame.Surface((exit_text.get_size()[0] + 63, exit_text.get_size()[1] + 12))
 
     #coloring buttons hehe
     start_surface.fill(bg_contrast)
     exit_surface.fill(bg_contrast)
 
     #blitting stuff
+    screen.blit(subtit_text, subtit_surf)
     screen.blit(tit_text, tit_surf)
-    start_surface.blit(start_text, (10, 10))
-    exit_surface.blit(exit_text, (10,10))
+    start_surface.blit(start_text, (10, 6))
+    exit_surface.blit(exit_text, (31.5, 6))
 
     #making those buttons
-    start_rect = start_surface.get_rect(center = (WIDTH//2, HEIGHT//2 + 30))
-    exit_rect = exit_surface.get_rect(center = (WIDTH//2, HEIGHT//2 + 170))
+    start_rect = start_surface.get_rect(center = (WIDTH // 2, HEIGHT // 2 + 30))
+    exit_rect = exit_surface.get_rect(center = (WIDTH // 2, HEIGHT // 2 + 170))
     screen.blit(start_surface, start_rect)
     screen.blit(exit_surface, exit_rect)
 
@@ -102,48 +101,55 @@ def start_screen():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_rect.collidepoint(event.pos):
-                    return
+                    return select_difficulty()
                 elif exit_rect.collidepoint(event.pos):
                     sys.exit()
         pygame.display.update()
 
 def select_difficulty():
     # creating font
-    tit_font = pygame.font.SysFont("comicsans", 80, True)
-    button_font = pygame.font.SysFont("comicsans", 55)
+    tit_font = pygame.font.SysFont("comicsans", 60, True)
+    button_font = pygame.font.SysFont("comicsans", 45)
+    back_font = pygame.font.SysFont("comicsans", 30)
 
     screen.fill(bg)
 
     # rendering the text onto surfaces
-    tit_text = tit_font.render("Select Difficulty:", False, bg_contrast)
-    easy_difficulty_text = button_font.render("Easy", False, bg)
-    medium_difficulty_text = button_font.render("Medium ", False, bg)
-    hard_difficulty_text = button_font.render("Hard ", False, bg)
+    tit_text = tit_font.render("SELECT DIFFICULTY:", True, bg_contrast)
+    easy_difficulty_text = button_font.render("EASY", True, bg)
+    medium_difficulty_text = button_font.render("MEDIUM", True, bg)
+    hard_difficulty_text = button_font.render("HARD", True, bg)
+    back_text = back_font.render("BACK", True, bg)
 
     # creating surfaces
-    tit_surf = tit_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
-    easy_difficulty_surface = pygame.Surface((easy_difficulty_text.get_size()[0] + 20, easy_difficulty_text.get_size()[1] + 20))
-    medium_difficulty_surface = pygame.Surface((medium_difficulty_text.get_size()[0] + 20, medium_difficulty_text.get_size()[1] + 20))
-    hard_difficulty_surface = pygame.Surface((hard_difficulty_text.get_size()[0] + 20, hard_difficulty_text.get_size()[1] + 20))
+    tit_surf = tit_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 140))
+    easy_difficulty_surface = pygame.Surface((easy_difficulty_text.get_size()[0] + 98, easy_difficulty_text.get_size()[1] + 10))
+    medium_difficulty_surface = pygame.Surface((medium_difficulty_text.get_size()[0] + 20, medium_difficulty_text.get_size()[1] + 10))
+    hard_difficulty_surface = pygame.Surface((hard_difficulty_text.get_size()[0] + 90, hard_difficulty_text.get_size()[1] + 10))
+    back_surface = pygame.Surface((back_text.get_size()[0] + 10, back_text.get_size()[1] + 10))
 
     # coloring buttons
     easy_difficulty_surface.fill(bg_contrast)
     medium_difficulty_surface.fill(bg_contrast)
     hard_difficulty_surface.fill(bg_contrast)
+    back_surface.fill(bg_contrast)
 
     # blitting stuff
     screen.blit(tit_text, tit_surf)
-    easy_difficulty_surface.blit(easy_difficulty_text, (10, 10))
-    medium_difficulty_surface.blit(medium_difficulty_text, (10, 10))
-    hard_difficulty_surface.blit(hard_difficulty_text, (10, 10))
+    easy_difficulty_surface.blit(easy_difficulty_text, (49, 5))
+    medium_difficulty_surface.blit(medium_difficulty_text, (10, 5))
+    hard_difficulty_surface.blit(hard_difficulty_text, (45, 5))
+    back_surface.blit(back_text, (5, 5))
 
     # making those buttons
-    easy_difficulty_rect = easy_difficulty_surface.get_rect(center=(WIDTH // 2 - 215, HEIGHT // 2 + 70))
-    medium_difficulty_rect = medium_difficulty_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70))
-    hard_difficulty_rect = hard_difficulty_surface.get_rect(center=(WIDTH // 2 + 230, HEIGHT // 2 + 70))
+    easy_difficulty_rect = easy_difficulty_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 30))
+    medium_difficulty_rect = medium_difficulty_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 140))
+    hard_difficulty_rect = hard_difficulty_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 250))
+    back_rect = back_surface.get_rect(center = (50, 33))
     screen.blit(easy_difficulty_surface, easy_difficulty_rect)
     screen.blit(medium_difficulty_surface, medium_difficulty_rect)
     screen.blit(hard_difficulty_surface, hard_difficulty_rect)
+    screen.blit(back_surface, back_rect)
 
     while True:
         for event in pygame.event.get():
@@ -156,16 +162,15 @@ def select_difficulty():
                     return "medium"
                 elif hard_difficulty_rect.collidepoint(event.pos):
                     return "hard"
+                elif back_rect.collidepoint(event.pos):
+                    return start_screen()
         pygame.display.update()
 
 # hype moments and aura
 if __name__ == '__main__':
 
-    # Show start screen
-    start_screen()
-
-    # Show difficulty selection screen
-    difficulty = select_difficulty()
+    # Show start screen and difficulty selection
+    difficulty = start_screen()
 
     puzzle_board, solution = generate_puzzle(difficulty)
 
