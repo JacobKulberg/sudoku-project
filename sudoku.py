@@ -15,6 +15,7 @@ SCREEN_HEIGHT = HEIGHT + 2
 bg = (239, 235, 216)
 bg_contrast = (31, 30, 28)
 baby_blue = (180, 180, 255)
+grite = (51, 51, 153)
 
 #initializing pygame window
 pygame.init()
@@ -268,8 +269,13 @@ if __name__ == '__main__':
         for r in range(9):
             for c in range(9):
                 value = puzzle_board[r][c]
-                if value != 0:
+                if value != 0 and initial[r][c] == value:
                     text_surf = number_font.render(str(value), True, bg_contrast)
+                    text_rect = text_surf.get_rect(
+                        center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
+                    screen.blit(text_surf, text_rect)
+                elif value !=0 and initial[r][c] != value:
+                    text_surf = number_font.render(str(value), True, grite)
                     text_rect = text_surf.get_rect(
                         center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
                     screen.blit(text_surf, text_rect)
