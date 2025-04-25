@@ -264,6 +264,7 @@ if __name__ == '__main__':
             selector = pygame.Surface((CELL_LENGTH - 1, CELL_LENGTH - 1))
             pygame.draw.rect(screen, baby_blue,
                              selector.get_rect(center = (c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2)))
+            grids()
         for r in range(9):
             for c in range(9):
                 value = puzzle_board[r][c]
