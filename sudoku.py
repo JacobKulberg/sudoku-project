@@ -52,25 +52,8 @@ def generate_puzzle(difficulty):
     initial = copy.deepcopy(sudoku.get_board())
     return puzzle, solution, initial
 
-def big_grids():
-    # heavy/box lines
-    for i in range(4):
-        pygame.draw.line(screen, bg_contrast, (0, i * BOX_LENGTH), (WIDTH, i * BOX_LENGTH), 3)
-        pygame.draw.line(screen, bg_contrast, (i * BOX_LENGTH, 0), (i * BOX_LENGTH, HEIGHT), 3)
-
-#draw the grid lines
-def grids():
-    screen.fill(bg)
-    #light lines
-    for i in range(1, 9):
-        #horizontals
-        pygame.draw.line(screen, bg_contrast, (0, i * CELL_LENGTH), (WIDTH, i * CELL_LENGTH))
-        #verticals
-        pygame.draw.line(screen, bg_contrast, (i * CELL_LENGTH, 0), (i * CELL_LENGTH, HEIGHT))
-
-    big_grids()
-
-    #menu options
+# menu options
+def menu():
     menu_font = pygame.font.SysFont("comicsans", 30)
     reset_text = menu_font.render("RESET", True, bg)
     menu_text = menu_font.render("MENU", True, bg)
@@ -84,15 +67,27 @@ def grids():
     reset_surf.blit(reset_text, (55, -5))
     menu_surf.blit(menu_text, (59.5, -5))
     exit_surf.blit(exit_text, (65.5, -5))
-    reset_rect = reset_surf.get_rect(center = (SCREEN_WIDTH - 150, SCREEN_HEIGHT// 2 - 100))
-    menu_rect = menu_surf.get_rect(center = (SCREEN_WIDTH - 150, SCREEN_HEIGHT/2))
-    exit_rect = exit_surf.get_rect(center = (SCREEN_WIDTH -150, SCREEN_HEIGHT//2 + 100))
+    reset_rect = reset_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 - 100))
+    menu_rect = menu_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT / 2))
+    exit_rect = exit_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 + 100))
     screen.blit(reset_surf, reset_rect)
     screen.blit(menu_surf, menu_rect)
     screen.blit(exit_surf, exit_rect)
     return reset_rect, menu_rect, exit_rect
 
+#draw the grid lines
+def grids():
+    #light lines
+    for i in range(1, 9):
+        #horizontals
+        pygame.draw.line(screen, bg_contrast, (0, i * CELL_LENGTH), (WIDTH, i * CELL_LENGTH))
+        #verticals
+        pygame.draw.line(screen, bg_contrast, (i * CELL_LENGTH, 0), (i * CELL_LENGTH, HEIGHT))
 
+    # heavy/box lines
+    for i in range(4):
+        pygame.draw.line(screen, bg_contrast, (0, i * BOX_LENGTH), (WIDTH, i * BOX_LENGTH), 3)
+        pygame.draw.line(screen, bg_contrast, (i * BOX_LENGTH, 0), (i * BOX_LENGTH, HEIGHT), 3)
 
 #you get the idea
 def start_screen():
@@ -219,8 +214,10 @@ if __name__ == '__main__':
         if start:
             # Show start screen and difficulty selection
             difficulty = start_screen()
+            screen.fill(bg)
+            grids()
 
-            res, men, ex = grids()
+            res, men, ex = menu()
 
             puzzle_board, solution, initial = generate_puzzle(difficulty)
 
@@ -259,19 +256,21 @@ if __name__ == '__main__':
                         puzzle_board[r][c] = int(event.unicode)
                         
         #Updates board with user input
+        screen.fill(bg)
         grids()
+        menu()
         if selected_tile:
             r, c = selected_tile
             selector = pygame.Surface((CELL_LENGTH - 1, CELL_LENGTH - 1))
             pygame.draw.rect(screen, baby_blue,
                              selector.get_rect(center = (c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2)))
-            big_grids()
         for r in range(9):
             for c in range(9):
                 value = puzzle_board[r][c]
                 if value != 0:
                     text_surf = number_font.render(str(value), True, bg_contrast)
-                    text_rect = text_surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
+                    text_rect = text_surf.get_rect(
+                        center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
                     screen.blit(text_surf, text_rect)
 
         pygame.display.update()
