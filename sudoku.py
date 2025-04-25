@@ -195,6 +195,15 @@ def select_difficulty():
                     return start_screen()
         pygame.display.update()
 
+# Mouse click selects tile
+def get_tile_pos(mouse_pos):
+        x, y = mouse_pos
+        if x >= WIDTH:
+            return None
+        row = y // (WIDTH//9)
+        col = x // (WIDTH//9)
+        return row, col
+
 # hype moments and aura
 if __name__ == '__main__':
 
@@ -209,6 +218,8 @@ if __name__ == '__main__':
             puzzle_board, solution = generate_puzzle(difficulty)
 
             number_font = get_number_font()
+
+            selected_tile = None
 
             # Render puzzle numbers
             for r in range(9):
@@ -228,6 +239,28 @@ if __name__ == '__main__':
                     start = True
                 elif ex.collidepoint(event.pos):
                     sys.exit()
-            # TODO: handle user input for selecting and filling cells
+                else:
+                    pos = get_tile_pos(event.pos)
+                    if pos:
+                        selected_tile = pos
+            if event.type == pygame.KEYDOWN:
+                if selected_tile and event.unicode in '123456789':
+                    r, c = selected_tile
+                    if puzzle_board[r][c] == 0:
+                        puzzle_board[r][c] = int(event.unicode)
+                        
+        #Updates board with user input
+        grids()
+        if selected_tile:
+            r, c = selected_tile
+            pygame.draw.rect(screen, (180, 180, 255),
+                             pygame.Rect(c * WIDTH // 9, r * WIDTH // 9, WIDTH // 9, WIDTH // 9))
+        for r in range(9):
+            for c in range(9):
+                value = puzzle_board[r][c]
+                if value != 0:
+                    text_surf = number_font.render(str(value), True, bg_contrast)
+                    text_rect = text_surf.get_rect(center=(c * WIDTH // 9 + 40, r * WIDTH // 9 + 40))
+                    screen.blit(text_surf, text_rect)
 
         pygame.display.update()
