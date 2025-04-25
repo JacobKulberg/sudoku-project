@@ -17,6 +17,7 @@ bg_contrast = (31, 30, 28)
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sudoku")
+start = True
 
 # Difficulty settings: number of cells to remove per level
 DIFFICULTY_LEVELS = {
@@ -49,17 +50,42 @@ def generate_puzzle(difficulty):
 
 #draw the grid lines
 def grids():
+    screen.fill(bg)
     #light lines
     for i in range(1, 9):
         #horizontals
-        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH//9), (WIDTH, i * WIDTH//9))
+        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH // 9), (WIDTH, i * WIDTH // 9))
         #verticals
-        pygame.draw.line(screen, bg_contrast, (i * WIDTH//9, 0), (i * WIDTH//9, WIDTH))
+        pygame.draw.line(screen, bg_contrast, (i * WIDTH // 9, 0), (i * WIDTH // 9, WIDTH))
 
     #heavy/box lines
     for i in range(4):
-        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH//3), (WIDTH, i * WIDTH//3), 3)
-        pygame.draw.line(screen, bg_contrast, (i * WIDTH//3, 0), (i * WIDTH//3, WIDTH), 3)
+        pygame.draw.line(screen, bg_contrast, (0, i * WIDTH // 3), (WIDTH, i * WIDTH // 3), 3)
+        pygame.draw.line(screen, bg_contrast, (i * WIDTH // 3, 0), (i * WIDTH // 3, WIDTH), 3)
+
+    #menu options
+    menu_font = pygame.font.SysFont("comicsans", 30)
+    reset_text = menu_font.render("RESET", True, bg)
+    menu_text = menu_font.render("MENU", True, bg)
+    exit_text = menu_font.render("EXIT", True, bg)
+    reset_surf = pygame.Surface((reset_text.get_size()[0] + 110, reset_text.get_size()[1] - 10))
+    menu_surf = pygame.Surface((menu_text.get_size()[0] + 119, menu_text.get_size()[1] - 10))
+    exit_surf = pygame.Surface((exit_text.get_size()[0] + 131, exit_text.get_size()[1] - 10))
+    reset_surf.fill(bg_contrast)
+    menu_surf.fill(bg_contrast)
+    exit_surf.fill(bg_contrast)
+    reset_surf.blit(reset_text, (55, -5))
+    menu_surf.blit(menu_text, (59.5, -5))
+    exit_surf.blit(exit_text, (65.5, -5))
+    reset_rect = reset_surf.get_rect(center = (SCREEN_WIDTH - 150, SCREEN_HEIGHT// 2 - 100))
+    menu_rect = menu_surf.get_rect(center = (SCREEN_WIDTH - 150, SCREEN_HEIGHT/2))
+    exit_rect = exit_surf.get_rect(center = (SCREEN_WIDTH -150, SCREEN_HEIGHT//2 + 100))
+    screen.blit(reset_surf, reset_rect)
+    screen.blit(menu_surf, menu_rect)
+    screen.blit(exit_surf, exit_rect)
+    return reset_rect, menu_rect, exit_rect
+
+
 
 #you get the idea
 def start_screen():
@@ -70,17 +96,17 @@ def start_screen():
 
     screen.fill(bg)
 
-    #rendering the text onto surfaces
+    #rendering the text
     subtit_text = subtit_font.render("WELCOME TO...", True, bg_contrast)
     tit_text = tit_font.render("SUDOKU!", True, bg_contrast)
     start_text = button_font.render("START", True, bg)
     exit_text = button_font.render("EXIT", True, bg)
 
-    #creating surfaces
+    #creating buttons
     subtit_surf = subtit_text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 200))
     tit_surf = tit_text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 150))
-    start_surface = pygame.Surface((start_text.get_size()[0] + 20, start_text.get_size()[1] + 12))
-    exit_surface = pygame.Surface((exit_text.get_size()[0] + 63, exit_text.get_size()[1] + 12))
+    start_surface = pygame.Surface((start_text.get_size()[0] + 20, start_text.get_size()[1] + 10))
+    exit_surface = pygame.Surface((exit_text.get_size()[0] + 63, exit_text.get_size()[1] + 10))
 
     #coloring buttons hehe
     start_surface.fill(bg_contrast)
@@ -89,10 +115,10 @@ def start_screen():
     #blitting stuff
     screen.blit(subtit_text, subtit_surf)
     screen.blit(tit_text, tit_surf)
-    start_surface.blit(start_text, (10, 6))
-    exit_surface.blit(exit_text, (31.5, 6))
+    start_surface.blit(start_text, (10, 5))
+    exit_surface.blit(exit_text, (31.5, 5))
 
-    #making those buttons
+    #making surfaces for those buttons
     start_rect = start_surface.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30))
     exit_rect = exit_surface.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 170))
     screen.blit(start_surface, start_rect)
@@ -117,14 +143,14 @@ def select_difficulty():
 
     screen.fill(bg)
 
-    # rendering the text onto surfaces
+    # rendering the text
     tit_text = tit_font.render("SELECT DIFFICULTY:", True, bg_contrast)
     easy_difficulty_text = button_font.render("EASY", True, bg)
     medium_difficulty_text = button_font.render("MEDIUM", True, bg)
     hard_difficulty_text = button_font.render("HARD", True, bg)
     back_text = back_font.render("BACK", True, bg)
 
-    # creating surfaces
+    # creating buttons
     tit_surf = tit_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 140))
     easy_difficulty_surface = pygame.Surface((easy_difficulty_text.get_size()[0] + 98, easy_difficulty_text.get_size()[1] + 10))
     medium_difficulty_surface = pygame.Surface((medium_difficulty_text.get_size()[0] + 20, medium_difficulty_text.get_size()[1] + 10))
@@ -144,7 +170,7 @@ def select_difficulty():
     hard_difficulty_surface.blit(hard_difficulty_text, (45, 5))
     back_surface.blit(back_text, (5, 5))
 
-    # making those buttons
+    # making surfaces for those buttons
     easy_difficulty_rect = easy_difficulty_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30))
     medium_difficulty_rect = medium_difficulty_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 140))
     hard_difficulty_rect = hard_difficulty_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 250))
@@ -172,30 +198,36 @@ def select_difficulty():
 # hype moments and aura
 if __name__ == '__main__':
 
-    # Show start screen and difficulty selection
-    difficulty = start_screen()
-
-    puzzle_board, solution = generate_puzzle(difficulty)
-
-    number_font = get_number_font()
-
     # Main game loop
     while True:
-        screen.fill(bg)
-        grids()
+        if start:
+            # Show start screen and difficulty selection
+            difficulty = start_screen()
 
-        # Render puzzle numbers
-        for r in range(9):
-            for c in range(9):
-                value = puzzle_board[r][c]
-                if value != 0:
-                    text_surf = number_font.render(str(value), True, bg_contrast)
-                    text_rect = text_surf.get_rect(center=(c * 80 + 40, r * 80 + 40))
-                    screen.blit(text_surf, text_rect)
+            res, men, ex = grids()
+
+            puzzle_board, solution = generate_puzzle(difficulty)
+
+            number_font = get_number_font()
+
+            # Render puzzle numbers
+            for r in range(9):
+                for c in range(9):
+                    value = puzzle_board[r][c]
+                    if value != 0:
+                        text_surf = number_font.render(str(value), True, bg_contrast)
+                        text_rect = text_surf.get_rect(center=(c * WIDTH//9 + 40, r * WIDTH//9 + 40))
+                        screen.blit(text_surf, text_rect)
+            start = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if men.collidepoint(event.pos):
+                    start = True
+                elif ex.collidepoint(event.pos):
+                    sys.exit()
             # TODO: handle user input for selecting and filling cells
 
         pygame.display.update()
