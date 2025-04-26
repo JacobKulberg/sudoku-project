@@ -238,20 +238,17 @@ def check_if_win(solution_board, played_board):
                 return False
     return True
 #draws game over thing
-def draw_game_over(win):
+def draw_game_over(win, color):
     wl_font = pygame.font.SysFont("comicsans", 45)
     wl = "GAME WON!" if win else "GAME LOST."
-    wlc = pastl if win else soft_red
-    w_text = wl_font.render(wl, True, wlc)
+    w_text = wl_font.render(wl, True, color)
     wl_surf = pygame.Surface((w_text.get_size()[0] + 10, w_text.get_size()[1] + 10))
     wl_surf.fill(bg_contrast)
     wl_surf.blit(w_text, (5, 5))
     wl_rect = wl_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 - 150))
     screen.blit(wl_surf, wl_rect)
 #a little coloring animation that fills the board with green if you win and red if you lose
-def color_animate(win):
-    color = pastl if win else soft_red
-
+def color_animate(color):
     for i in range(1, 10, 2):
         coloring_surf = pygame.Surface((CELL_LENGTH * i, CELL_LENGTH * i))
         coloring_surf.fill(color)
@@ -262,6 +259,13 @@ def color_animate(win):
         draw_numbers()
         pygame.time.delay(200)
         pygame.display.update()
+    pygame.time.delay(400)
+
+    subtit_font = pygame.font.SysFont("comicsans", 20)
+    subtit_text = subtit_font.render("CHOOSE AN OPTION BELOW.", True, bg_contrast)
+    subtit_surf = subtit_text.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 - 75))
+    screen.blit(subtit_text, subtit_surf)
+
 
 
 
@@ -323,9 +327,9 @@ if __name__ == '__main__':
                                 game_over = True
                                 selected_tile = None
                                 win_state = check_if_win(solution, puzzle_board)
-                                wl_color = pastl if game_over else soft_red
-                                draw_game_over(win_state)
-                                color_animate(win_state)
+                                wl_color = pastl if win_state else soft_red
+                                draw_game_over(win_state, wl_color)
+                                color_animate(wl_color)
                         temp_input = None
 
         # Rendering
