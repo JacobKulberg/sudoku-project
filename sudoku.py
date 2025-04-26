@@ -17,7 +17,7 @@ bg_contrast = (31, 30, 28)
 baby_blue = (180, 180, 255)
 big_blue = (51, 51, 153)
 acid = (255, 245, 0)
-pastel = (144, 238, 144)
+pastl = (144, 238, 144)
 soft_red = (255, 127, 127)
 
 #initializing pygame window
@@ -227,7 +227,7 @@ def check_if_win(solution_board, played_board):
 def draw_game_over(win):
     wl_font = pygame.font.SysFont("comicsans", 45)
     wl = "GAME WON!" if win else "GAME LOST."
-    wlc = pastel if win else soft_red
+    wlc = pastl if win else soft_red
     w_text = wl_font.render(wl, True, wlc)
     wl_surf = pygame.Surface((w_text.get_size()[0] + 10, w_text.get_size()[1] + 10))
     wl_surf.fill(bg_contrast)
