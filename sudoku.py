@@ -15,13 +15,15 @@ SCREEN_HEIGHT = HEIGHT + 2
 bg = (239, 235, 216)
 bg_contrast = (31, 30, 28)
 baby_blue = (180, 180, 255)
-grite = (51, 51, 153)
+big_blue = (51, 51, 153)
+acid = (255, 245, 0)
+pastel = (144, 238, 144)
+soft_red = (255, 127, 127)
 
 #initializing pygame window
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sudoku")
-start = True
 
 # Difficulty settings: number of cells to remove per level
 DIFFICULTY_LEVELS = {
@@ -57,24 +59,24 @@ def generate_puzzle(difficulty):
 def menu():
     menu_font = pygame.font.SysFont("comicsans", 30)
     reset_text = menu_font.render("RESET", True, bg)
-    menu_text = menu_font.render("MENU", True, bg)
+    restart_text = menu_font.render("RESTART", True, bg)
     exit_text = menu_font.render("EXIT", True, bg)
     reset_surf = pygame.Surface((reset_text.get_size()[0] + 110, reset_text.get_size()[1] - 10))
-    menu_surf = pygame.Surface((menu_text.get_size()[0] + 119, menu_text.get_size()[1] - 10))
+    restart_surf = pygame.Surface((restart_text.get_size()[0] + 68, restart_text.get_size()[1] - 10))
     exit_surf = pygame.Surface((exit_text.get_size()[0] + 131, exit_text.get_size()[1] - 10))
     reset_surf.fill(bg_contrast)
-    menu_surf.fill(bg_contrast)
+    restart_surf.fill(bg_contrast)
     exit_surf.fill(bg_contrast)
     reset_surf.blit(reset_text, (55, -5))
-    menu_surf.blit(menu_text, (59.5, -5))
+    restart_surf.blit(restart_text, (34, -5))
     exit_surf.blit(exit_text, (65.5, -5))
-    reset_rect = reset_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 - 100))
-    menu_rect = menu_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT / 2))
-    exit_rect = exit_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 + 100))
+    reset_rect = reset_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2))
+    restart_rect = restart_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT / 2 + 100))
+    exit_rect = exit_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 + 200))
     screen.blit(reset_surf, reset_rect)
-    screen.blit(menu_surf, menu_rect)
+    screen.blit(restart_surf, restart_rect)
     screen.blit(exit_surf, exit_rect)
-    return reset_rect, menu_rect, exit_rect
+    return reset_rect, restart_rect, exit_rect
 
 #draw the grid lines
 def grids():
@@ -207,17 +209,46 @@ def get_tile_pos(mouse_pos):
         col = x // (WIDTH//9)
         return row, col
 
+#checks if all cells on the board has been filled
+def check_if_full(board):
+    for i in board:
+        for j in i:
+            if j == 0:
+                return False
+    return True
+#checks if the game has been won
+def check_if_win(solution_board, played_board):
+    for row in range(len(played_board)):
+        for col in range(len(played_board)):
+            if played_board[row][col] != solution_board[row][col]:
+                return False
+    return True
+#draws game over thing
+def draw_game_over(win):
+    wl_font = pygame.font.SysFont("comicsans", 45)
+    wl = "GAME WON!" if win else "GAME LOST."
+    wlc = pastel if win else soft_red
+    w_text = wl_font.render(wl, True, wlc)
+    wl_surf = pygame.Surface((w_text.get_size()[0] + 10, w_text.get_size()[1] + 10))
+    wl_surf.fill(bg_contrast)
+    wl_surf.blit(w_text, (5, 5))
+    wl_rect = wl_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 - 150))
+    screen.blit(wl_surf, wl_rect)
+
+
 # hype moments and aura
 if __name__ == '__main__':
-    selected_tile = None
-    temp_input = None  # stores number before ENTER
+    start = True
 
     while True:
         if start:
+            game_over = False
             difficulty = start_screen()
             puzzle_board, solution, initial = generate_puzzle(difficulty)
             number_font = get_number_font()
-            res, men, ex = menu()
+            res, rst, ex = menu()
+            selected_tile = (0, 0)
+            temp_input = None  # stores number before ENTER
             start = False
 
         for event in pygame.event.get():
@@ -227,16 +258,17 @@ if __name__ == '__main__':
                 if res.collidepoint(event.pos):
                     puzzle_board = copy.deepcopy(initial)
                     temp_input = None
-                elif men.collidepoint(event.pos):
+                    game_over = False
+                elif rst.collidepoint(event.pos):
                     start = True
                 elif ex.collidepoint(event.pos):
                     sys.exit()
-                else:
+                elif not game_over:
                     pos = get_tile_pos(event.pos)
-                    if pos and initial[pos[0]][pos[1]] == 0:
+                    if pos:
                         selected_tile = pos
                         temp_input = None
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN and not game_over:
                 if selected_tile:
                     r, c = selected_tile
                     if event.key == pygame.K_UP:
@@ -251,17 +283,22 @@ if __name__ == '__main__':
                     elif event.key == pygame.K_RIGHT:
                         selected_tile = (r, (c + 1) % 9)
                         temp_input = None
-                    elif event.unicode in '123456789':
+                    elif event.unicode in '123456789' and initial[r][c] == 0:
                         temp_input = int(event.unicode)
                     elif event.key == pygame.K_RETURN and temp_input is not None:
                         if initial[r][c] == 0:
                             puzzle_board[r][c] = temp_input
+                            if check_if_full(puzzle_board):
+                                game_over = True
+                                draw_game_over(check_if_win(solution, puzzle_board))
                         temp_input = None
 
         # Rendering
         screen.fill(bg)
         grids()
         menu()
+        if game_over:
+            draw_game_over(check_if_win(solution, puzzle_board))
 
         # Highlight selected cell
         if selected_tile:
@@ -276,7 +313,7 @@ if __name__ == '__main__':
             for c in range(9):
                 val = puzzle_board[r][c]
                 if val != 0:
-                    color = bg_contrast if initial[r][c] == val else grite
+                    color = bg_contrast if initial[r][c] == val else big_blue
                     surf = number_font.render(str(val), True, color)
                     rect = surf.get_rect(
                         center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
@@ -285,7 +322,7 @@ if __name__ == '__main__':
         # Draw temp input
         if selected_tile and temp_input:
             r, c = selected_tile
-            surf = number_font.render(str(temp_input), True, grite)
+            surf = number_font.render(str(temp_input), True, acid)
             rect = surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
             screen.blit(surf, rect)
 
