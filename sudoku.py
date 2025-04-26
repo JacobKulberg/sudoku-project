@@ -24,6 +24,8 @@ soft_red = (255, 127, 127)
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sudoku")
+board_screen = pygame.Surface((WIDTH, HEIGHT))
+screen.blit(board_screen, (0, 0))
 
 # Difficulty settings: number of cells to remove per level
 DIFFICULTY_LEVELS = {
@@ -91,6 +93,18 @@ def grids():
     for i in range(4):
         pygame.draw.line(screen, bg_contrast, (0, i * BOX_LENGTH), (WIDTH, i * BOX_LENGTH), 3)
         pygame.draw.line(screen, bg_contrast, (i * BOX_LENGTH, 0), (i * BOX_LENGTH, HEIGHT), 3)
+
+# Draw numbers
+def draw_numbers():
+    for r in range(9):
+        for c in range(9):
+            val = puzzle_board[r][c]
+            if val != 0:
+                color = bg_contrast if initial[r][c] == val else big_blue
+                surf = number_font.render(str(val), True, color)
+                rect = surf.get_rect(
+                    center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
+                screen.blit(surf, rect)
 
 #you get the idea
 def start_screen():
@@ -234,6 +248,21 @@ def draw_game_over(win):
     wl_surf.blit(w_text, (5, 5))
     wl_rect = wl_surf.get_rect(center=(SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2 - 150))
     screen.blit(wl_surf, wl_rect)
+#a little coloring animation that fills the board with green if you win and red if you lose
+def color_animate(win):
+    color = pastl if win else soft_red
+
+    for i in range(1, 10, 2):
+        coloring_surf = pygame.Surface((CELL_LENGTH * i, CELL_LENGTH * i))
+        coloring_surf.fill(color)
+        coloring_rect = coloring_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        board_screen.fill(bg)
+        screen.blit(coloring_surf, coloring_rect)
+        grids()
+        draw_numbers()
+        pygame.time.delay(200)
+        pygame.display.update()
+
 
 
 # hype moments and aura
@@ -258,7 +287,9 @@ if __name__ == '__main__':
                 if res.collidepoint(event.pos):
                     puzzle_board = copy.deepcopy(initial)
                     temp_input = None
-                    game_over = False
+                    if game_over:
+                        selected_tile = (0, 0)
+                        game_over = False
                 elif rst.collidepoint(event.pos):
                     start = True
                 elif ex.collidepoint(event.pos):
@@ -290,15 +321,18 @@ if __name__ == '__main__':
                             puzzle_board[r][c] = temp_input
                             if check_if_full(puzzle_board):
                                 game_over = True
-                                draw_game_over(check_if_win(solution, puzzle_board))
+                                selected_tile = None
+                                win_state = check_if_win(solution, puzzle_board)
+                                wl_color = pastl if game_over else soft_red
+                                draw_game_over(win_state)
+                                color_animate(win_state)
                         temp_input = None
 
         # Rendering
-        screen.fill(bg)
-        grids()
-        menu()
-        if game_over:
-            draw_game_over(check_if_win(solution, puzzle_board))
+        if not game_over:
+            screen.fill(bg)
+            grids()
+            menu()
 
         # Highlight selected cell
         if selected_tile:
@@ -308,19 +342,11 @@ if __name__ == '__main__':
             screen.blit(highlight, (c * CELL_LENGTH + 1, r * CELL_LENGTH + 1))
             grids()
 
-        # Draw numbers
-        for r in range(9):
-            for c in range(9):
-                val = puzzle_board[r][c]
-                if val != 0:
-                    color = bg_contrast if initial[r][c] == val else big_blue
-                    surf = number_font.render(str(val), True, color)
-                    rect = surf.get_rect(
-                        center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
-                    screen.blit(surf, rect)
+        if not game_over:
+            draw_numbers()
 
         # Draw temp input
-        if selected_tile and temp_input:
+        if selected_tile and temp_input and not game_over:
             r, c = selected_tile
             surf = number_font.render(str(temp_input), True, acid)
             rect = surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
