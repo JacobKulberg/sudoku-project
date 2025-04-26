@@ -314,7 +314,7 @@ if __name__ == '__main__':
                     elif event.key == pygame.K_RIGHT:
                         selected_tile = (r, (c + 1) % 9)
                         temp_input = None
-                    elif event.unicode in '123456789' and initial[r][c] == 0:
+                    elif event.unicode != '' and event.unicode in '123456789' and initial[r][c] == 0:
                         temp_input = int(event.unicode)
                     elif event.key == pygame.K_RETURN and temp_input is not None:
                         if initial[r][c] == 0:
