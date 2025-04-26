@@ -348,8 +348,17 @@ if __name__ == '__main__':
         # Draw temp input
         if selected_tile and temp_input and not game_over:
             r, c = selected_tile
+
             surf = number_font.render(str(temp_input), True, acid)
             rect = surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
+
+            bg_surf = pygame.Surface((CELL_LENGTH, CELL_LENGTH))
+            bg_surf.fill(baby_blue)
+            bg_rect = bg_surf.get_rect(center=(c * CELL_LENGTH + CELL_LENGTH // 2, r * CELL_LENGTH + CELL_LENGTH // 2))
+
+            screen.blit(bg_surf, bg_rect)
             screen.blit(surf, rect)
+
+            grids()
 
         pygame.display.update()
